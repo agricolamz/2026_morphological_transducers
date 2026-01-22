@@ -1,0 +1,12 @@
+titi<ins>:titite
+titi<dat>:teteɣtə
+titi<loc>:titik
+<com>titi<sim>:ɣatetema
+titi<dim>:titiqej
+titi<go.to><inf>:teteɣtək
+qora<ins>:qorata
+qora<dat>:qoraɣtə
+qora<loc>:qorak
+<com>qora<sim>:ɣaqorama
+qora<dim>:qoraqaj
+qora<go.to><inf>:qoraɣtək

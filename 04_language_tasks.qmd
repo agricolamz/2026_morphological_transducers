@@ -1,0 +1,89 @@
+# Моделирование языковых явлений
+
+## Амбификс в литовском
+
+::: {.callout-note}
+
+###### Задание 04_01
+
+Смоделируйте при помощи `lexd` и `twol` поведение литовского (балтийские, индо-европейские) возвратного суффикса -*si*, который занимает позицию перед корнем, если к корню присоединяется любой префикс.
+
+| перевод       | root-inf-rfl | neg-rfl-root-inf |
+|---------------|--------------|------------------|
+| учиться       | moky-ti-s    | ne-si-moky-ti    |
+| радоваться    | džiaug-ti-s  | ne-si-džiaug-ti  |
+| осматриваться | žvalgy-ti-s  | ne-si-žvalgy-ti  |
+| гордиться     | didžiuo-ti-s | ne-si-didžiuo-ti |
+| смеяться      | juok-ti-s    | ne-si-juok-ti    |
+
+:::
+
+## Кабардинское глагольное согласование
+
+::: {.callout-note}
+
+###### Задание 04_03
+
+Мы составили на основе [@kumakhov2006: 169--179] (и с помощью Ю. А. Ландера) фрагмент парадигмы глагола 'идти'[^comitative] в кабардино-черкесском языке (адыгские, абхазо-адыгские). В таблице приводятся поверхностная и глубинные формы. Смоделируйте приведенные формы, используя `lexd` и `twol`. Графема *у* обозначает в данном примере лабиализацию [ʷ] или комбинацию губного аппроксиманта и *ы* [wə]. При моделировании не следует соединять в одной форме префикс дериктива `<dir>` и аппликативов (`<com>`, `<ben>`, `<mal>`). В кабардино-черкесском языке это возможно, но требует дополнительной морфонологии. Алфавит: `а б в д з к н о п с т у ф х щ ъ ы э I`.
+
+```{r}
+readr::read_csv("data/04_kabardian_verb.csv") |> 
+  DT::datatable(rownames = FALSE, 
+                filter = 'top', 
+                options = list(pageLength = 70, 
+                               autoWidth = TRUE, 
+                               info = FALSE,
+                               dom = 'fBtp',
+                               paginate = FALSE))
+```
+
+[^comitative]: Стоит иметь ввиду, что комитативные формы от данного глагола чаще употребляются не в буквальном значении, а в значении "выйти замуж".
+
+:::
+
+## Метатеза в венгерском
+
+::: {.callout-note}
+
+###### Задание 04_03
+
+В венгерском языке (угорские, фино-угорские) в нескольких корнях встречается метатеза, затрагивающая h и сонорный [@kenesei1998]. Она происходит перед несколькими показателями -*ek* \<pl\>, -*et* \<acc\> и -*en* \<on\>\<ess\>. Диграф ly обозначает палатальный апроксимант [j]. Неизменная часть алфавита: `b e é g h i k l n ő p r t ü y z`.
+
+| number | case    | шкала           | артиллерист   | сомнение       | хлопья        | бремя, груз  | чаша          |
+|--------|---------|-----------------|---------------|----------------|---------------|--------------|---------------|
+| SG     | NOM     | pikkely         | tüzér         | kétely         | pehely        | teher        | kehely        |
+| SG     | ACC     | pikkely-t       | tüzér-t       | kétely-t       | pelyh-et      | terh-et      | kelyh-et      |
+| SG     | DAT     | pikkely-nek     | tüzér-nek     | kétely-nek     | pehely-nek    | teher-nek    | kehely-nek    |
+| SG     | PRP     | pikkely-ért     | tüzér-ért     | kétely-ért     | pehely-ért    | teher-ért    | kehely-ért    |
+| SG     | TERM    | pikkely-ig      | tüzér-ig      | kétely-ig      | pehely-ig     | teher-ig     | kehely-ig     |
+| SG     | FRML    | pikkely-ként    | tüzér-ként    | kétely-ként    | pehely-ként   | teher-ként   | kehely-ként   |
+| SG     | IN+ESS  | pikkely-ben     | tüzér-ben     | kétely-ben     | pehely-ben    | teher-ben    | kehely-ben    |
+| SG     | ON+ESS  | pikkely-en      | tüzér-en      | kétely-en      | pelyh-en      | terh-en      | kelyh-en      |
+| SG     | AT+ESS  | pikkely-nél     | tüzér-nél     | kétely-nél     | pehely-nél    | teher-nél    | kehely-nél    |
+| SG     | IN+ALL  | pikkely-be      | tüzér-be      | kétely-be      | pehely-be     | teher-be     | kehely-be     |
+| SG     | ON+ALL  | pikkely-re      | tüzér-re      | kétely-re      | pehely-re     | teher-re     | kehely-re     |
+| SG     | AT+ALL  | pikkely-hez     | tüzér-hez     | kétely-hez     | pehely-hez    | teher-hez    | kehely-hez    |
+| SG     | IN+ABL  | pikkely-ből     | tüzér-ből     | kétely-ből     | pehely-ből    | teher-ből    | kehely-ből    |
+| SG     | ON+ABL  | pikkely-ről     | tüzér-ről     | kétely-ről     | pehely-ről    | teher-ről    | kehely-ről    |
+| SG     | AT+ABL  | pikkely-től     | tüzér-től     | kétely-től     | pehely-től    | teher-től    | kehely-től    |
+| SG     | LGSPEC1 | pikkely-é       | tüzér-é       | kétely-é       | pehely-é      | teher-é      | kehely-é      |
+| SG     | LGSPEC2 | pikkely-éi      | tüzér-éi      | kétely-éi      | pehely-éi     | teher-éi     | kehely-éi     |
+| PL     | NOM     | pikkely-ek      | tüzér-ek      | kétely-ek      | pelyh-ek      | terh-ek      | kelyh-ek      |
+| PL     | ACC     | pikkely-ek-et   | tüzér-ek-et   | kétely-ek-et   | pelyh-ek-et   | terh-ek-et   | kelyh-ek-et   |
+| PL     | DAT     | pikkely-ek-nek  | tüzér-ek-nek  | kétely-ek-nek  | pelyh-ek-nek  | terh-ek-nek  | kelyh-ek-nek  |
+| PL     | PRP     | pikkely-ek-ért  | tüzér-ek-ért  | kétely-ek-ért  | pelyh-ek-ért  | terh-ek-ért  | kelyh-ek-ért  |
+| PL     | TERM    | pikkely-ek-ig   | tüzér-ek-ig   | kétely-ek-ig   | pelyh-ek-ig   | terh-ek-ig   | kelyh-ek-ig   |
+| PL     | FRML    | pikkely-ek-ként | tüzér-ek-ként | kétely-ek-ként | pelyh-ek-ként | terh-ek-ként | kelyh-ek-ként |
+| PL     | IN+ESS  | pikkely-ek-ben  | tüzér-ek-ben  | kétely-ek-ben  | pelyh-ek-ben  | terh-ek-ben  | kelyh-ek-ben  |
+| PL     | ON+ESS  | pikkely-ek-en   | tüzér-ek-en   | kétely-ek-en   | pelyh-ek-en   | terh-ek-en   | kelyh-ek-en   |
+| PL     | AT+ESS  | pikkely-ek-nél  | tüzér-ek-nél  | kétely-ek-nél  | pelyh-ek-nél  | terh-ek-nél  | kelyh-ek-nél  |
+| PL     | IN+ALL  | pikkely-ek-be   | tüzér-ek-be   | kétely-ek-be   | pelyh-ek-be   | terh-ek-be   | kelyh-ek-be   |
+| PL     | ON+ALL  | pikkely-ek-re   | tüzér-ek-re   | kétely-ek-re   | pelyh-ek-re   | terh-ek-re   | kelyh-ek-re   |
+| PL     | AT+ALL  | pikkely-ek-hez  | tüzér-ek-hez  | kétely-ek-hez  | pelyh-ek-hez  | terh-ek-hez  | kelyh-ek-hez  |
+| PL     | IN+ABL  | pikkely-ek-ből  | tüzér-ek-ből  | kétely-ek-ből  | pelyh-ek-ből  | terh-ek-ből  | kelyh-ek-ből  |
+| PL     | ON+ABL  | pikkely-ek-ről  | tüzér-ek-ről  | kétely-ek-ről  | pelyh-ek-ről  | terh-ek-ről  | kelyh-ek-ről  |
+| PL     | AT+ABL  | pikkely-ek-től  | tüzér-ek-től  | kétely-ek-től  | pelyh-ek-től  | terh-ek-től  | kelyh-ek-től  |
+| PL     | LGSPEC1 | pikkely-ek-é    | tüzér-ek-é    | kétely-ek-é    | pelyh-ek-é    | terh-ek-é    | kelyh-ek-é    |
+| PL     | LGSPEC2 | pikkely-ek-éi   | tüzér-ek-éi   | kétely-ek-éi   | pelyh-ek-éi   | terh-ek-éi   | kelyh-ek-éi   |
+
+:::

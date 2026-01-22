@@ -1,0 +1,534 @@
+# Введение в `cg3`: разрешение морфологической неоднозначности
+
+## Constraint grammar
+
+Парадигма Constraint grammar (CG) [@karlsson1995; @bick15] --- это правиловая процедурная система обработки текста, позволяющая решать достаточно большой набор разнообразных задач, такие как
+
+- разрешение неоднозначности;
+- приписывание тэгов, например, синтаксических ролей;
+- разрешение анафоры;
+- построение деревьев зависимостей;
+- chunking --- выделение границ синтаксических единиц (без внутренней структуры, отношений вершины-зависимое и т. п.) [@bick2013];
+- и многие другие.
+
+CG разрабатывалась начиная с 1980-ых Фредом Кралссоном и другими в университете Хельсинки. С самого начала эта парадигма задумывалась как модуль, который работает с любым текстом на любом языке, так что каждой входной единице сопоставляется некоторая выходная единица (включая пунктуацию и другие топографические особенности). Слово *constraint* в описании подчеркивает фильтрующую функцию, которую носит CG модуль: на вход мы подаем некоторый текст и морфологические разборы, а CG модуль удаляет, изменяет или модифицирует морфологические разборы.
+
+Важно отметить, что CG правила легко соединяются вместе с морфологическими трансдьюсерами, но они так же работают и в других фреймворках: пока я готовился к этой лекции, я нашел `.cg3` файл в репозитории, в котором использовался `uniparser` Тимофея Архангельского.
+
+Отмечу неожиданное преимущество правиловых фреймворков: их достаточно легко превращать в текст, объясняющий процедуру. Попытку сделать такое для правил CG можно посмотреть в следующей работе [@swanson25].
+
+## `cg3`
+
+В наших лекциях для разрешения морфологической неоднозначности мы будем использовать `cg3` (полное название `vislcg3`). `VISL` (Visual Interactive Syntax Learning) --- подпроект датской компании GrammarSoft ApS, а `CG3` обозначает новую, третью, версию реализации парадигмы. Чтобы установить достаточно следующих команд.
+
+```{{shell}}
+$ curl -s https://apertium.projectjj.com/apt/install-nightly.sh | sudo bash
+$ sudo apt-get install cg3
+```
+
+Первая команда добавляет в операционную систему новый источник программ, он такой же как и для команд `lexd` и `twol`. Вторая команда --- стандартный способ установить программу. У программы есть большая [документация](https://edu.visl.dk/cg3/chunked/index.html), но начинается она со следующего предостережения:
+
+> This manual should be regarded as a guideline. Some of the features or functionality described is either not implemented yet, or does not work exactly as advertised. A good place to see what is and is not implemented is to run the regression test suite as the test names are indicative of features. The individual tests are also good starting points to find examples on how a specific feature works. 
+
+`cg3` по умолчанию угадывает формат, в котором ей поступают данные на вход и отдает в таком же формате. Однако есть и программы более узкого назначения:
+
+- `cg-conv` --- программа для преобразования входных/выходных типов данных (например, между апертиумовским и CG) ;
+- `cg-comp` компилирует файл CG правил в бинарный файл ;
+- `cg-proc` обрабатывает входные данные при помощи файла CG правил или его бинарного варианта ;
+- и некоторые другие.
+
+В программе `cg3` достаточно много аргументов (см. `cg3 -h`), нам важно три:
+
+- `-g` --- указывает файл с CG правилами ;
+- `-I` --- файл для чтения вместо стандартного stdin ;
+- `-O` --- файл для записи результата работы вместо стандартного stdout.
+
+### Первый пример
+
+Рассмотрим такой трансдьюсер, записанный в `example_1.lexd`:
+
+```{python}
+!cat examples/07_example_1.lexd
+```
+
+Мы его можем скомпилировать в оптимизированный:
+
+```{{shell}}
+$ lexd example_1.lexd | hfst-txt2fst | hfst-invert | hfst-fst2fst -O -o analyzer.hfstol
+```
+
+```{python}
+!lexd examples/07_example_1.lexd | hfst-txt2fst | hfst-invert | hfst-fst2fst -O -o examples/analyzer.hfstol
+```
+
+Подадим предложение на вход процессору:
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc analyzer.hfstol
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc examples/analyzer.hfstol
+```
+
+Апертиумовский формат неудобно читать, так что добавим флаг `-C`, чтобы `hfst-proc` преобразовал получившееся в CG формат:
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol
+```
+
+Мы видим, что форма *город* имеет два возможных разбора. Кроме того мы видим, что один из разборов точно неправильный. Для того чтобы убрать ненужный разбор, создадим следующий файл `example_1.cg3`:
+
+```{python}
+!cat examples/07_example_1.cg3
+```
+
+Применим написанное правило к нашему трансдьюсеру:
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_1.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_1.cg3
+```
+
+Таким образом мы избавились от ненужного разбора. В следующих разделах мы углубимся в возможности `cg3`.
+
+### Структура `.cg3` файла
+
+Файлы с CG правилами принято записывать в файлы с расширениями `.cg3` или `.rlx`. В принципе никакой необходимой структуры такие файлы не предполагают, однако для читаемости имеет смысл делить логические фрагменты на разделы `SECTION`. Такие разделы могут иметь названия. Кроме того можно вводить специальные разделы `BEFORE-SECTIONS` и `AFTER-SECTIONS`, которые будут запускаться до и перед разделами `SECTION`. Также для отлаживания кода полезно знать команду `END`, после которой правила из файла не читаются. Содержание файла обычно заключается в наборе команд для декларации переменных при помощи команд `LIST` и `SET` и манипуляции 
+
+- с тегами;
+- чтениями;
+- зависимостями;
+- отношениями;
+- единицами анализа (в формализме CG их называют *когортами*, *cohort*);
+- и др.
+
+Комментарии отделяются при помощи знака `#`.
+
+Кроме того, есть некоторый [набор настроек](https://edu.visl.dk/cg3/chunked/grammar.html#grammar-options) для чтения грамматики, который добавляется при помощи команды `OPTIONS`.
+
+Вот фрагменты искусственного `.сg3` файла, который приводиться здесь для иллюстрации:
+
+```{{cg3}}
+DELIMITERS = "<.>" "<!>" "<?>" "<...>";
+OPTIONS += addcohort-attach ;
+
+<...>
+
+# важный комментарий
+
+LIST Det = art ;
+LIST PRON = prde prps prn ;
+SET Sem/Time = Month | Months | Year | Century | Season | Seasons | TimeOfDay ; 
+
+<...>
+
+SECTION                   # <1>
+
+REMOVE Dat IF (NOT 0 Anim OR Cog OR Ant) (NOT 0 Pron) ;
+SELECT Gen IF (0C N) (-1C A OR Det) ;
+
+<...>
+
+SECTION some-other-forms ; # <2>
+
+REMOVE Imper IF (1C Fin) ;
+
+<...>
+
+```
+
+1. Если раздел `SECTION` не поименована, то можно не ставить точки с запятой.
+2. Если раздел `SECTION` поименован, то а) в названии не должно быть пробелов б) строка должна заканчиваться точкой с запятой.
+
+### Списки и операции над ними
+
+Списки это поименованные переменные, содержащие некоторые объекты. Из примера выше понятно, что объекты в списке разделяются пробелом, а конец списка обозначается точкой с запятой.
+
+Один из первых списков, который даже имеет отдельное название --- раздел `DELIMITERS`. В данном разделе перечисляются единицы, которые останавливают парсинг. Списки `DELIMITERS` в файлах `.cg3` на GitHub не отличаются креативностью и обычно содержат вполне ожидаемые
+
+```{{cg3}}
+DELIMITERS = "<.>" "<!>" "<?>" "<...>" ;
+```
+
+Однако, может быть для ваших задач будет иметь смысл добавить какой-то знак переноса строки, на случай, если будет отсутвовать пунктуация в конце абзаца. Важно отметить, что при отсутствии раздела `DELIMITERS` в файле с правилами программа `cg3` выдает предупреждение. 
+
+Кроме того, существует раздел `SOFT-DELIMITERS`, который я видел заполненный только запятой `"<,>"`.
+
+Остальные списки задаются при помощи команды `LIST`, после которой следует дать переменной некоторое имя, например,
+
+```{{cg3}}
+LIST number = sg pl ;
+LIST number += du ;    # <1>
+```
+
+1. Операция `+=` добавляет тег или несколько тегов к уже созданному списку, хотя и не понятно, что мешало сразу все задать.
+
+Функция `SET` также позволяет задать списки, однако делает это на основании одной из следующих операций или их сочетаний
+
+- объединение `OR` и `|`;
+
+```{{cg3}}
+LIST A = a b c d ;
+LIST B = c d e f ;
+SET new_set = a OR b ;
+```
+
+```
+a b c d e f
+```
+
+- прямое произведение `+`;
+
+```{{cg3}}
+LIST A = N ;
+LIST B = sg du pl ;
+SET new_set = a + b ;
+```
+
+```
+(N sg) (N du) (N pl)
+```
+
+- исключение `-`;
+
+```{{cg3}}
+LIST A = a b c d ;
+LIST B = c d e f ;
+SET new_set = a - b ;
+```
+
+```
+a b
+```
+
+- разность `\`;
+
+```{{cg3}}
+LIST A = a b c d ;
+LIST B = c d e f ;
+SET new_set = a \ b ;
+```
+
+```
+a b
+```
+
+- симмитричная разность `∆` (U+2206);
+
+```{{cg3}}
+LIST A = a b c d ;
+LIST B = c d e f ;
+SET new_set = a ∆ b ;
+```
+
+```
+a b e f
+```
+
+- пересечение `∩`;
+
+```{{cg3}}
+LIST A = a b c d ;
+LIST B = c d e f ;
+SET new_set = a ∩ b ;
+```
+
+```
+c d
+```
+
+### Операции с чтениями
+
+- `SELECT` удаляет все чтения из когорты, кроме тех, что подходят к контексту.
+
+```
+SELECT <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_SELECT.cg3
+```
+
+```{python}
+!cat examples/07_example_SELECT.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_SELECT.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_SELECT.cg3
+```
+
+- `REMOVE` удаляет чтение из когорты. Может удалить даже последнее чтение.
+
+```
+REMOVE <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_REMOVE.cg3
+```
+
+```{python}
+!cat examples/07_example_REMOVE.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_REMOVE.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_REMOVE.cg3
+```
+
+- `RESTORE` восстанавливает чтение удаленное при помощи `SELECT` или `REMOVE`. Не работает, если все чтения были удалены.
+
+```
+RESTORE <restore_target> <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_RESTORE.cg3
+```
+
+```{python}
+!cat examples/07_example_RESTORE.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_RESTORE.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_RESTORE.cg3
+```
+
+### Операции с тегами
+
+Первая группа команд, которую мы рассмотрим, измененяет теги.
+
+- `ADD` --- добавляет тэг к набору тегов, **разрешая** в дальнейшем одной из операций `MAP`, `ADD` или `REPLACE` работать с анализируемым чтением ;
+
+```
+ADD <tags> [BEFORE|AFTER <tags>] <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_ADD.cg3
+```
+
+```{python}
+!cat examples/07_example_ADD.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_ADD.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_ADD.cg3
+```
+
+- `MAP` --- добавляет тэг к набору тегов, **запрещая** в дальнейшем одной из операций `MAP`, `ADD` или `REPLACE` работать с анализируемым чтением ;
+
+```
+MAP <tags> [BEFORE|AFTER <tags>] <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_MAP.cg3
+```
+
+```{python}
+!cat examples/07_example_MAP.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_MAP.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_MAP.cg3
+```
+
+- `SUBSTITUTE` --- заменяет один набор тэгов на другой набор тэгов. Может быть сделана нулевая замена, для этого следует использовать знак `*`.
+
+```
+SUBSTITUTE <locate tags> <replacement tags> <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_SUBSTITUTE.cg3
+```
+
+```{python}
+!cat examples/07_example_SUBSTITUTE.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_SUBSTITUTE.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_SUBSTITUTE.cg3
+```
+
+- `REPLACE` --- оставляет только выделенный тэг, а остальные теги убирает, **запрещая** в дальнейшем одной из операций `MAP`, `ADD` или `REPLACE` работать с анализируемым чтением ;
+
+```{{shell}}
+$ cat example_REPLACE.cg3
+```
+
+```{python}
+!cat examples/07_example_REPLACE.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_REPLACE.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_REPLACE.cg3
+```
+
+- `UNMAP` снимает блокирующее поведение команд `MAP` и `REPLACE`. По-умолчанию `UNMAP` работает только с единственными чтениями, но если хочется чтобы блокировка была снята с нескольких чтений одной формы, стоит добавить `UNSAFE`.
+
+```
+UNMAP <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_UNMAP.cg3
+```
+
+```{python}
+!cat examples/07_example_UNMAP.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_UNMAP.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_UNMAP.cg3
+```
+
+```{{shell}}
+$ cat example_UNSAFE.cg3
+```
+
+```{python}
+!cat examples/07_example_UNSAFE.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_UNSAFE.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_UNSAFE.cg3
+```
+
+- `APPEND` добавляет новое прочтение к некоторой единице. Следите, чтобы среди добавляемого была начальная форма.
+
+```
+APPEND <tags> <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_APPEND.cg3
+```
+
+```{python}
+!cat examples/07_example_APPEND.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_APPEND.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_APPEND.cg3
+```
+
+- `COPY` копирует прочтение и добавляет к нему тег или набор тегов. 
+
+```
+COPY <extra tags> [EXCEPT <except tags>] [BEFORE|AFTER <tags>] <target> [contextual_tests] ;
+```
+
+```{{shell}}
+$ cat example_COPY.cg3
+```
+
+```{python}
+!cat examples/07_example_COPY.cg3
+```
+
+```{{shell}}
+$ echo "Поезд едет в город." | hfst-proc -C analyzer.hfstol | cg3 -g example_COPY.cg3
+```
+
+```{python}
+!echo "Поезд едет в город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g examples/07_example_COPY.cg3
+```
+
+### Контекстные тесты
+
+Большинство примеров операций выше имели в своих шаблонах раздел `[contextual_tests]`, который делает инструменты значительно функциональнее. Во-первых, можно задать контекст справа или слева:
+
+```{{cg3}}
+... (1 N)      # <1>
+... (-2* V)    # <2>
+```
+
+1. Есть ли хотя бы одно чтение с тегом `N` в следующей когорте?
+2. Есть ли хотя бы одно чтение с тегом `V` две или более когорты назад?
+
+После номера можно добавить `C`, тогда тест будет исполнятся только в случае если все чтения в когорте соответствуют условию.
+
+```{{cg3}}
+... (1С N)      # <1>
+... (-2С* V)    # <2>
+```
+
+1. Все ли чтения имеют тег `N` в следующей когорте?
+2. Все ли чтения имеют тег `V` две или более когорты назад?
+
+Результат теста можно перевернуть, добавив `NOT`:
+
+```{{cg3}}
+... (NOT 1 N)      # <1>
+... (NOT -2* V)    # <2>
+```
+
+1. В следующей когорте не должно быть чтения с тегом `N`.
+2. Две и более когорты назад не должно быть чтения с тегом `V`.
+
+
+::: {.callout-note}
+
+###### Задание 07_01
+
+Напишите `cg3` правила, которые в нашем примере удаляют лишнее чтение и разметят синтаксические роли `S`, `O` и `V`. Избавьтесь также от предупреждения про разделители.
+
+```{python}
+!echo "Поезд едет в большой город." | hfst-proc -C examples/analyzer.hfstol | cg3 -g task_tests/answer_07_01.cg3_decrypted.txt
+```
+:::
+
+Мы посмотрели далеко не все возможности `cg3`: в документации можно найти инструкции по созданию новых когорт, добавлению зависимостей и отношений --- очень полезное для создания синтаксических корпусов, трибанков.
+
+```{python}
+!rm -f examples/*.hfstol
+```

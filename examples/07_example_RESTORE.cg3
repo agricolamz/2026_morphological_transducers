@@ -1,0 +1,2 @@
+SELECT ("город" n acc sg) ;
+RESTORE ("город" n nom sg) ("город" n);

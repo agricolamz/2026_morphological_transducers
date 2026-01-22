@@ -1,0 +1,718 @@
+# Операции с трансдьюсерами
+
+Посмотрим на следующий трансдьюсер.
+
+```{{lexd}}
+PATTERNS
+Noun [<N>:] Suffix[-adj] | (Suffix[adj] AdjInflection)
+Noun [<N>:] NounInflection
+
+LEXICON Noun
+ночь
+печь
+
+LEXICON Suffix
+<dim>:ка
+<adj>:н[adj]
+
+LEXICON AdjInflection
+<m><sg><nom>:ой
+
+LEXICON NounInflection
+<nom>:
+<acc>:
+```
+
+```{{twol}}
+Alphabet
+  а е й к н о п ч ь ь:0;
+
+Rules
+
+"чк чн пишется без ь"
+! например, ночьной -> ночной или печька -> печка
+
+ь:0 <=> _ к;
+        _ н;
+```
+
+```{{shell}}
+$ lexd example.lexd | hfst-txt2fst -o lexd.hfst
+$ hfst-twolc -q example.twol -o twol.hfst
+$ hfst-compose-intersect lexd.hfst twol.hfst -o generator.hfst
+```
+
+```{python}
+!lexd examples/06_example.lexd | hfst-txt2fst -o examples/lexd.hfst
+!hfst-twolc -q examples/06_example.twol -o examples/twol.hfst
+!hfst-compose-intersect examples/lexd.hfst examples/twol.hfst -o examples/generator.hfst
+```
+
+## Некоторые команды `hfst`
+
+В большинстве команд ниже работают флаги `-i` --- входящий файл; `-o` --- исходящий файл. Если `-o` отсутствует, то результат печатается в консоль.
+
+### `hfst-fst2strings`
+
+Печатает формы:
+
+```{{shell}}
+$ hfst-fst2strings generator.hfst
+```
+
+```{python}
+!hfst-fst2strings examples/generator.hfst
+```
+
+Также существует программа `hfst-expand`, которая делает то же самое.
+
+### `hfst-fst2txt`
+
+Печатает трансдьюсер в AT&T формате:
+
+```{{shell}}
+$ hfst-fst2txt generator.hfst
+```
+
+```{python}
+!hfst-fst2txt examples/generator.hfst
+```
+
+### `hfst-summarise`
+
+Данная программа печатает саммари для трансдьюсера.
+
+```{{shell}}
+$ hfst-summarise generator.hfst
+```
+
+```{python}
+!hfst-summarise examples/generator.hfst
+```
+
+Если вам не хочется смотреть на выдачу целиком, можно совмещать с `grep`:
+
+```{{shell}}
+$ hfst-summarise generator.hfst | grep cyclic
+```
+
+```{python}
+!hfst-summarise examples/generator.hfst | grep cyclic
+```
+
+### `hfst-name`
+
+Если хочется, чтобы у трансдьюсера было осмысленное имя, то можно при создании дать ему имя при помощи функции `hfst-name` или `hfst-edit-metadata`. Посмотреть имя трансдьюсера можно при помощи аргумента `-p` (и некоторых других):
+
+```{{shell}}
+$ hfst-compose-intersect lexd.hfst twol.hfst | hfst-name -n 'the best fst ever' -o generator.hfst
+$ hfst-name -p generator.hfst
+```
+
+```{python}
+!hfst-compose-intersect examples/lexd.hfst examples/twol.hfst | hfst-name -n 'the best fst ever' -o examples/generator.hfst
+!hfst-name -p examples/generator.hfst
+```
+
+Программа `hfst-edit-metadata` позволяет настроить, например, следующие поля: 
+
+- `--add=author=...` 
+- `--add=licence=...`
+- `--add=name='...'`
+
+### `hfst-dump-alphabets`
+
+Печатает алфавит:
+
+```{{shell}}
+$ hfst-dump-alphabets generator.hfst
+```
+
+```{python}
+!hfst-dump-alphabets examples/generator.hfst
+```
+
+Мне не очень понятно, почему он печатает все два раза, однако этот фрагмент документации намекает мне, что это решаемая проблема:
+
+```
+Alphabet dump options:
+  -1, --exclude-seen       Ignore alphabets seen in automaton
+  -2, --exclude-metadata   Ignore alphabets from headers
+```
+
+```{{shell}}
+$ hfst-dump-alphabets -1 generator.hfst
+```
+
+```{python}
+!hfst-dump-alphabets -1 examples/generator.hfst
+```
+
+
+Также при помощи программы `grep` полезно проверить какие-нибудь символы:
+
+```{{shell}}
+$ hfst-dump-alphabets -1 generator.hfst | grep ъ
+```
+```{python}
+!hfst-dump-alphabets -1 examples/generator.hfst | grep ъ
+```
+```{{shell}}
+$ hfst-dump-alphabets -1 generator.hfst | grep к
+```
+```{python}
+!hfst-dump-alphabets -1 examples/generator.hfst | grep к
+```
+
+### `hfst-substitute`
+
+Заменяет единицы в трансдьюсере (`-f` from; `-t` to):
+
+```{{shell}}
+$ hfst-substitute -f "ч" -t "Ч" -i generator.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-substitute -f "ч" -t "Ч" -i examples/generator.hfst | hfst-fst2strings
+```
+
+Можно заменять конкретные соответствия (строчки в AT&T записи).
+
+```{{shell}}
+$ hfst-substitute -f "ь:@0@" -t "ъ:ъ" -i generator.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-substitute -f "ь:@0@" -t "ъ:ъ" -i examples/generator.hfst | hfst-fst2strings
+```
+
+Важно отметить, что в таком случае не работает расписывание `ъ` -> `ъ:ъ`.
+
+Если хочется чего-то удалить, то следует использовать запись `@0@` или `@_EPSILON_SYMBOL_@`:
+
+```{{shell}}
+$ hfst-substitute -f "ч" -t "@0@" -i generator.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-substitute -f "ч" -t "@0@" -i examples/generator.hfst | hfst-fst2strings
+```
+
+Замены можно делать по списку, для этого нужно иметь `.tsv` файл. Ниже содержимое файла `label_file.tsv`:
+
+```
+<N>	@_EPSILON_SYMBOL_@
+<acc>	@_EPSILON_SYMBOL_@
+<adj>	@_EPSILON_SYMBOL_@
+<dim>	@_EPSILON_SYMBOL_@
+<m>	@_EPSILON_SYMBOL_@
+<nom>	@_EPSILON_SYMBOL_@
+<sg>	@_EPSILON_SYMBOL_@
+```
+
+Мы можем удалить все теги и получить соответствие основы-формы:
+
+```{{shell}}
+$ hfst-substitute -F label_file.tsv -i generator.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-substitute -F examples/06_label_file.tsv -i examples/generator.hfst | hfst-fst2strings
+```
+
+Опытным путем я выяснил, что это команда не будет работать с записью `@0@`.
+
+### `hfst-lookup`
+
+```{{shell}}
+$ echo "ночь<N><dim>" | hfst-lookup generator.hfst
+```
+
+```{python}
+!echo "ночь<N><dim>" | hfst-lookup examples/generator.hfst 
+```
+
+Кроме того, можно на вход подавать несколько форм, разделяя их переносом строки (`\n`), или программой `cat` читать из файла:
+
+```{{shell}}
+$ echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup generator.hfst
+```
+
+```{python}
+!echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup examples/generator.hfst 
+```
+
+Важно также отметить, что при помощи флага `-O` можно задать тип, в котором нужно печатать результат:
+
+- `xerox`
+
+```{{shell}}
+$ echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O xerox generator.hfst
+```
+
+```{python}
+!echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O xerox examples/generator.hfst 
+```
+
+- `cg` --- Constraint Grammar
+
+```{{shell}}
+$ echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O cg generator.hfst
+```
+
+```{python}
+!echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O cg examples/generator.hfst 
+```
+
+- `apertium`
+
+```{{shell}}
+$ echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O apertium generator.hfst
+```
+
+```{python}
+!echo "ночь<N><adj><m><sg><nom>\nночь<N><dim>" | hfst-lookup -O apertium examples/generator.hfst 
+```
+
+### `hfst-invert`
+
+Это очень полезная функция, так как она позволяет переворачивать трансдьюсер. В прошлом разделе мы видели генератор, а что если мы хотим наоборот - не генератор, а анализатор?
+
+```{{shell}}
+$ hfst-invert generator.hfst -o analyzer.hfst
+$ echo "ночка" | hfst-lookup analyzer.hfst
+```
+
+```{python}
+!hfst-invert examples/generator.hfst -o examples/analyzer.hfst
+!echo "ночка" | hfst-lookup examples/analyzer.hfst
+```
+
+Любой трансдьюсер обратим --- и это очень классно: вы делаете один объект, а он и анализатор, и генератор.
+
+### `hfst-fst2fst`
+
+Возможно, Вы заметили предупреждение, которое возвращает `hfst-lookup`. Оптимизированный формат можно сделать при помощи программы `hfst-fst2fst`, он полезен и для других программ `hfst`.
+
+```{{shell}}
+$ hfst-fst2fst -O analyzer.hfst -o analyzer.hfstol
+$ echo "ночка" | hfst-lookup analyzer.hfstol
+```
+
+```{python}
+!hfst-fst2fst -O examples/analyzer.hfst -o examples/analyzer.hfstol
+!echo "ночка" | hfst-lookup examples/analyzer.hfst
+```
+
+Программа `hfst-lookup` больше не выдает предупреждения. Еще более ожидаемый вывод будет, если использовать программу `hfst-optimized-lookup`:
+
+```{{shell}}
+$ echo "ночка" | hfst-optimized-lookup analyzer.hfstol
+```
+
+```{python}
+!echo "ночка" | hfst-optimized-lookup examples/analyzer.hfstol
+```
+
+### `hfst-proc` и `hfst-proc2`
+
+Программа `hfst-proc` парсит текст. Важно, чтобы трансдьюсер был в оптимизированной форме, т. е. `.hfstol`. Обратите внимание на то, как экранируется восклицательный знак.
+
+```{{shell}}
+$ echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc analyzer.hfstol
+```
+
+```{python}
+!echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc examples/analyzer.hfstol
+```
+
+Разные аргументы форматируют по-разному выдачу:
+
+- `-C`/`--cg` Constraint Grammar
+
+```{{shell}}
+$ echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -C analyzer.hfstol
+```
+```{python}
+!echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -C examples/analyzer.hfstol
+```
+
+- `-x` Xerox 
+
+```{{shell}}
+$ echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -x analyzer.hfstol
+```
+```{python}
+!echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -x examples/analyzer.hfstol
+```
+
+- `-w` возвращать словарный вид слова, а не тот вид, в котором он встретился в тексте.
+
+```{{shell}}
+$ echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -xw analyzer.hfstol
+```
+```{python}
+!echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -xw examples/analyzer.hfstol
+```
+
+- флаг `-N` позволяет настроить, сколько форм будет возвращаться при анализе, например ниже исчез разбор `ПЕЧЬ<N><nom>`.
+
+```{{shell}}
+$ echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -xN 1 analyzer.hfstol
+```
+```{python}
+!echo "какая-то Ночка и ПЕЧЬ\!" | hfst-proc -xN 1 examples/analyzer.hfstol
+```
+
+Кроме того, существует программа `hfst-proc2`, которая, кажется, возвращает только то, что анализатор может проанализировать:
+
+```{{shell}}
+$ echo "какая-то ночка и печь\!" | hfst-proc2 analyzer.hfstol
+```
+```{python}
+!echo "какая-то ночка и печь\!" | hfst-proc2 examples/analyzer.hfstol
+```
+
+Флаг `-a` позволяет напечатать все:
+
+```{{shell}}
+$ echo "какая-то ночка и печь\!" | hfst-proc2 -a analyzer.hfstol
+```
+```{python}
+!echo "какая-то ночка и печь\!" | hfst-proc2 -a examples/analyzer.hfstol
+```
+
+Флаг `-C` печатает в CoNLL-U:
+
+```{{shell}}
+$ echo "какая-то ночка и печь\!" | hfst-proc2 -С analyzer.hfstol
+```
+```{python}
+!echo "какая-то ночка и печь\!" | hfst-proc2 -C examples/analyzer.hfstol
+```
+
+### `hfst-pair-test`
+
+Эта программа проверяет `twol`:
+
+```{{shell}}
+$ echo "н о ч к а" | hfst-pair-test twol.hfst
+```
+```{python}
+!echo "н о ч к а" | hfst-pair-test examples/twol.hfst
+```
+
+```{{shell}}
+$ echo "н о ч ь к а" | hfst-pair-test twol.hfst
+```
+```{python}
+!echo "н о ч ь к а" | hfst-pair-test examples/twol.hfst
+```
+
+```{{shell}}
+$ echo "н о ч ь:0 к а" | hfst-pair-test twol.hfst
+```
+```{python}
+!echo "н о ч ь:0 к а" | hfst-pair-test examples/twol.hfst
+```
+
+Тесты могут быть отрицательными:
+
+```{{shell}}
+$ echo "н о ч ь к а" | hfst-pair-test -N twol.hfst
+```
+```{python}
+!echo "н о ч ь к а" | hfst-pair-test -N examples/twol.hfst
+```
+
+```{{shell}}
+$ echo "н о ч к а" | hfst-pair-test -N twol.hfst
+```
+```{python}
+!echo "н о ч к а" | hfst-pair-test -N examples/twol.hfst
+```
+
+Вообще стоит обратить внимание на мануал этой программы: она подробнее многих других программ `hfst`.
+
+### `hfst-kill-paths`
+
+Убирает все пути, содержащие некоторый символ:
+
+```{{shell}}
+$ hfst-kill-paths -S о generator.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-kill-paths -S о examples/generator.hfst | hfst-fst2strings
+```
+
+## Некоторые операции с двумя трансдьюсерами
+
+Создадим себе второй очень похожий трансдьюсер:
+
+```{{shell}}
+$ hfst-substitute -f "о" -t "О" -i generator.hfst | hfst-name -n 'transducer 2' -o generator2.hfst
+```
+
+```{python}
+!hfst-substitute -f "о" -t "О" -i examples/generator.hfst | hfst-name -n 'transducer 2' -o examples/generator2.hfst
+```
+
+### `hfst-compare`
+
+Сравнивает трансдьюсеры
+
+```{{shell}}
+$ hfst-compare generator.hfst generator.hfst
+```
+```{python}
+!hfst-compare examples/generator.hfst examples/generator.hfst
+```
+
+```{{shell}}
+$ hfst-compare generator.hfst generator2.hfst
+```
+```{python}
+!hfst-compare examples/generator.hfst examples/generator2.hfst
+```
+
+```{{shell}}
+$ hfst-compare generator.hfst analyzer.hfst
+```
+```{python}
+!hfst-compare examples/generator.hfst examples/analyzer.hfst
+```
+
+### `hfst-concatenate`
+
+Конкатенация трансдьюсеров - последнее состояние одного трансдьюсера становится начальным состоянием второго.
+
+```{{shell}}
+hfst-concatenate generator.hfst generator2.hfst | hfst-fst2strings | head 
+```
+```{python}
+!hfst-concatenate examples/generator.hfst examples/generator2.hfst | hfst-fst2strings | head 
+```
+
+### `hfst-conjunct` или `hfst-intersect`
+
+Пересечение трансдьюсеров: выделяет общее для двух трансдьюсеров.
+
+```{{shell}}
+hfst-conjunct generator.hfst generator2.hfst | hfst-fst2strings
+```
+```{python}
+!hfst-conjunct examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
+```
+
+### `hfst-disjunct` или `hfst-union`
+
+Объединение трансдьюсеров.
+
+```{{shell}}
+hfst-disjunct generator.hfst generator2.hfst | hfst-fst2strings
+```
+```{python}
+!hfst-disjunct examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
+```
+
+### `hfst-subtract` или `hfst-minus`
+
+Вычитание трансдьюсеров.
+
+```{{shell}}
+hfst-subtract generator.hfst generator2.hfst | hfst-fst2strings
+```
+```{python}
+!hfst-subtract examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
+```
+
+## Создание транслитераторов
+
+Для того, чтобы создать транслитерацию, давайте запишем наши соответствия в такой файл:
+
+```{{lexd}}
+PATTERNS
+segments
+
+LEXICON segments
+а:a
+е:e
+й:j
+к:k
+н:n
+о:o
+п:p
+ч:tʃ
+ь:
+<N>
+<acc>
+<adj>
+<dim>
+<m>
+<nom>
+<sg>
+```
+
+```{{shell}}
+$ lexd correspondences.lexd | hfst-txt2fst -o correspondences.hfst
+$ hfst-fst2strings correspondences.hfst
+```
+
+```{python}
+!lexd examples/06_correspondences.lexd | hfst-txt2fst -o examples/correspondences.hfst
+!hfst-fst2strings examples/correspondences.hfst
+```
+
+Получившийся трансдьюсер делает достаточно скучную вещь: если ему дать один символ он его переведет, а вот большее количество --- нет:
+
+```{{shell}}
+echo "ч" | hfst-lookup correspondences.hfst
+```
+
+```{python}
+!echo "ч" | hfst-lookup examples/correspondences.hfst
+```
+
+```{{shell}}
+echo "че" | hfst-lookup correspondences.hfst
+```
+
+```{python}
+!echo "че" | hfst-lookup examples/correspondences.hfst
+```
+
+Чтобы наш трансдьюсер делал преобразования во всей строке, нужно его зациклить при помощи программы `hfst-repeat`:
+
+```{{shell}}
+$ lexd correspondences.lexd | hfst-txt2fst | hfst-repeat -f 1 -o correspondences.hfst
+```
+
+```{python}
+!lexd examples/06_correspondences.lexd | hfst-txt2fst | hfst-repeat -f 1 -o examples/correspondences.hfst
+```
+
+```{{shell}}
+echo "ч" | hfst-lookup correspondences.hfst
+```
+
+```{python}
+!echo "ч" | hfst-lookup examples/correspondences.hfst
+```
+
+```{{shell}}
+echo "че" | hfst-lookup correspondences.hfst
+```
+
+```{python}
+!echo "че" | hfst-lookup examples/correspondences.hfst
+```
+
+Чтобы соединить транслитератор с уже готовыми трансдьюсерами, достаточно сделать композицию:
+
+```{{shell}}
+hfst-compose analyzer.hfst correspondences.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-compose examples/analyzer.hfst examples/correspondences.hfst | hfst-fst2strings
+```
+
+```{{shell}}
+hfst-compose generator.hfst correspondences.hfst | hfst-fst2strings
+```
+
+```{python}
+!hfst-compose examples/generator.hfst examples/correspondences.hfst | hfst-fst2strings
+```
+
+А что если в ходе транслитерация графема чувствительна к контексту? Например, русское <е> может транскрибироваться как [e] (*мел*) и как [je] (*еда*). Я полагаю, у решения этой проблемы есть две стратегии:
+
+- добавлять все соответствия в файл соответствий, например,
+
+```
+...
+че:tɕe
+пе:pʲe
+е:je
+...
+```
+
+- добавлять еще один `twol` трансдьюсер, который исправляет какие-то вещи
+
+```{{lexd}}
+PATTERNS
+segments
+
+LEXICON segments
+а:a
+е:{E}
+й:j
+к:k
+н:n
+о:o
+п:p
+ч:tɕ
+ь:
+```
+
+```{{twol}}
+Alphabet
+  %{E%}:je
+  %{E%}:e
+  %{E%}:ʲe
+;
+
+Rules
+"E в начале слова"
+%{E%}:je <=> .#. _ ;
+
+"E после мягких"
+%{E%}:e <=> ɕ _ ;
+```
+
+```{{shell}}
+$ hfst-twolc -q correspondences_twol.twol -o correspondences_twol.hfst
+$ lexd correspondences2.lexd | hfst-txt2fst | hfst-repeat -f 1 | hfst-compose-intersect correspondences_twol.hfst -o correspondences.hfst
+$ echo "ечене" | hfst-lookup correspondences.hfst
+```
+
+```{python}
+!hfst-twolc -q examples/06_correspondences_twol.twol -o examples/correspondences_twol.hfst
+!lexd examples/06_correspondences2.lexd | hfst-txt2fst | hfst-repeat -f 1 | hfst-compose-intersect examples/correspondences_twol.hfst -o examples/correspondences.hfst
+!echo "ечене" | hfst-lookup examples/correspondences.hfst
+```
+
+## Перевод основы
+
+Лингвисты в отличие от NLP-специалистов и компьютерных лингвистов предпочитают, чтобы основы в примерах, которые они приводят, были переведены. Этого можно достичь точно таким же набором инструментов, какой мы использовали при создании транслитератора. Создадим файл с соответствиями:
+
+```{{lexd}}
+PATTERNS
+translations
+
+LEXICON translations
+печь:stove
+ночь:night
+<N>
+<acc>
+<adj>
+<dim>
+<m>
+<nom>
+<sg>
+```
+
+```{{shell}}
+$ lexd ru_en.lexd | hfst-txt2fst | hfst-repeat -f 1 -o ru_en.hfst
+$ hfst-compose analyzer.hfst ru_en.hfst | hfst-fst2strings
+```
+
+```{python}
+!lexd examples/06_ru_en.lexd | hfst-txt2fst | hfst-repeat -f 1 -o examples/ru_en.hfst
+!hfst-compose examples/analyzer.hfst examples/ru_en.hfst | hfst-fst2strings
+```
+
+```{python}
+!rm -f examples/*.hfst examples/*.hfstol
+```

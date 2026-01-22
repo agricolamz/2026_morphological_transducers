@@ -1,0 +1,6 @@
+sing<v><pres>:sing
+sing<v><pres><3><sg>:sings
+walk<v><pres>:walk
+walk<v><pres><3><sg>:walks
+dance<v><pres>:dance
+dance<v><pres><3><sg>:dances

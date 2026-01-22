@@ -1,0 +1,847 @@
+# Введение в `lexd`: морфология
+
+## Техническое введение
+
+В данном разделе мы обсуждаем синтаксис программы [`lexd`](https://github.com/apertium/lexd/blob/main/Usage.md) [@swanson21]. Данная программа работает в связке 
+
+- с бесплатным програмным обеспечением с открытым исходным кодом Helsinki Finite-State Tookit `hfst` [@linden11];
+- аналогичным инструментом от Apertium `lttoolbox` [@ortiz05].
+
+Это консольная программа, работающая на юниксоподобных системах. Чтобы избежать сложностей на начальных этапах курса, мы решили вначале познакомиться с синтаксисом `lexd` и попробовать описывать разные языковые явления, не затрудняя всех установкой и запуском у себя на компьютере. В связи с этим мы предлагаем выучить следующие четыре команды, которые будут работать на операционных системах Linux, основанных на Debian/Ubuntu, и в Google Colab:
+
+- скачиваем инструкции для установки `lexd` и `hfst` и дальнейшей работы с ними, записанные в простом текстовом файле, которые можно прочитать, если открыть [ссылку](https://shorturl.at/0bBXE) из команды. Команда `make` запускает установку. Для того, чтобы это работало в Google Colab нужно перед командой нужно поставить восклицательный знак: `!curl ...`. Знак доллара означает, что дальше следует команда командной строки, не надо его никуда копировать.
+
+```{{shell}}
+$ curl -s https://raw.githubusercontent.com/agricolamz/2025_morphological_transducers/refs/heads/main/task_tests/Makefile -o Makefile; make
+```
+
+- дальше мы ожидаем, что вы создадите в коллабе или у себя на компьютере (если у вас Linux), файл с названием `task.lexd`. В Google Colab для этого достаточно вставить первой строкой кодового блока `%%writefile task.lexd`. Вот пример такого файла:
+
+```{{lexd}}
+PATTERNS
+VerbRoot VerbInfl
+
+LEXICON VerbRoot
+sing<v>:sing
+walk<v>:walk
+dance<v>:dance
+
+LEXICON VerbInfl
+<pres>:
+<pres><3><sg>:s
+```
+
+- После того, как вы установили нужные программы и создали файл, можно посмотреть формы и разборы, которые генерируются трансдьюсером. Это можно сделать следующей командой (не забудьте поставить восклицательный знак перед `make` в Google Colab):
+
+```{{shell}}
+$ make forms
+
+sing<v><pres>:sing
+sing<v><pres><3><sg>:sings
+walk<v><pres>:walk
+walk<v><pres><3><sg>:walks
+dance<v><pres>:dance
+dance<v><pres><3><sg>:dances
+```
+
+- Кроме того можно посмотреть анализ/генерацию конкретных форм (не забудьте поставить восклицательный знак перед `make` в Google Colab):
+
+```{{shell}}
+$ make analysis FORM="sings"
+
+hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+Using HFST basic transducer format and performing slow lookups
+> sings	sing<v><pres><3><sg>	0,000000
+```
+
+
+```{{shell}}
+$ make generation FORM="walk<v><pres><3><sg>"
+
+hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+Using HFST basic transducer format and performing slow lookups
+> walk<v><pres><3><sg>	walks	0,000000
+```
+
+- В ходе курса мы будем разбирать разные лингвистические задачи. У каждой задачи есть номер и автоматический тест, который его проверяет. Чтобы запустить автоматическую проверку, следует ввести команду, где первое число -- номер раздела, а второе число -- номер задачи. Например, для того, чтобы проверить, работает ли проверка задания, попробуйте запустить следующую команду:
+
+```{{shell}}
+$ make test_02_01
+```
+
+- Чтобы окончательно посмотреть все варианты, попробуйте изменить последнюю строчку файла `task.lexd` на `<pres><3><sg>:S` и снова перезапустить команду:
+
+```{{shell}}
+$ make test_02_01
+```
+
+
+
+## Программа `lexd`
+
+У программы `lexd` есть подробный [туториал](https://github.com/apertium/lexd/blob/main/Usage.md), так что данный раздел во многом опирается на него. Давайте подробнее рассмотрим `lexd` файл, который мы видели в прошлом разделе:
+
+```{{lexd}}
+PATTERNS            # <1>
+VerbRoot VerbInfl   
+
+LEXICON VerbRoot    # <2>
+sing<v>:sing        # <3>
+walk<v>:walk
+dance<v>:dance
+
+LEXICON VerbInfl    # <4>
+<pres>:             # <5>
+<pres><3><sg>:s     # <6>
+```
+
+1. Обязательный раздел `PATTERNS`, в котором каждая строка сообщает, как могут соединяться элементы из разных групп лексикона.
+2. Группа лексикона, которая состоит из слова `LEXICON` и имени, под которым данная группа появляется в разделе `PATTERNS`
+3. Наполнение группы. Первым идет разбор, а потом после двоеточия языковой материал. Морфологические теги принято записывать в треугольных скобках.
+4. Вторая группа `LEXICON` и ее имя.
+5. Пример нулевой морфемы.
+6. Пример морфемы с несколькими морфологическими тегами.
+
+Отметим, что можно создавать свои именнованные подразделы `PATTERN`, которые потом можно использовать в разделе `PATTERNS`, например:
+
+```{{lexd}}
+PATTERNS
+VerbStem Tense PersonNumber
+
+PATTERN VerbStem            # <1>
+VerbRoot
+VerbRoot Causative
+
+LEXICON VerbRoot
+...
+
+LEXICON Causative
+...
+
+LEXICON Tense 
+...
+
+LEXICON PersonNumber
+...
+```
+
+1. Именованный раздел `PATTERN`, который используется потом в разделе `PATTERNS`.
+
+Таким образом, в каждом файле `lexd` должен быть раздел `PATTERNS`, содержащий в себе переменные, которые могут быть заданы либо в разделе `PATTERN`, либо в разделе `LEXICON`, либо их анонимные варианты (см. раздел @sec-anonymous). Также разные разделы можно переименовывать при помощи группы `ALIAS` (см. мануал). Комментарии можно оформлять при помощи хеша `#`.
+
+::: {.callout-note}
+
+###### Задание 02_02 
+
+Ниже представлен фрагмент ицаринской (даргинские, нахско-дагестанские) парадигмы из [@sumbatova03]. Попробуйте смоделировать ее при помощи `lexd`. Для корректного моделирования формы sup.lat нужна морфонология, так что при моделировании используйте форму в скобках. При моделировании придется покривить душой: *-б* в формах ess и dir --- инфикс классного показателя. Помните, что каждый морфологический тег следует обрамлять в отдельные треугольные скобки, например, `ссика<n><ant><dir>:ссикасабал`. Для ориентации в нашем lexd файле 26 строк.
+
+| форма    | козел                    | медведь                |
+|----------|--------------------------|------------------------|
+| abs      | _кьаца_                  | _ссика_                |
+| erg      | _кьацал_                 | _ссикал_               |
+| gen      | _кьацала_                | _ссикала_              |
+| com      | _кьацаццилли_            | _ссикаццилли_          |
+| sup.lat  | _кьацай_ (< _кьацайи_)   | _ссикай_ (< _ссикайи)_ |
+| sup.ess  | _кьацайиб_               | _ссикайиб_             |
+| sup.dir  | _кьацайибал_             | _ссикайибал_           |
+| sup.el   | _кьацайир_               | _ссикайир_             |
+| sub.lat  | _кьацагъу_               | _ссикагъу_             |
+| sub.ess  | _кьацагъуб_              | _ссикагъуб_            |
+| sub.dir  | _кьацагъубал_            | _ссикагъубал_          |
+| sub.el   | _кьацагъур_              | _ссикагъур_            |
+| ant.lat  | _кьацаса_                | _ссикаса_              |
+| ant.ess  | _кьацасаб_               | _ссикасаб_             |
+| ant.dir  | _кьацасабал_             | _ссикасабал_           |
+| ant.el   | _кьацасар_               | _ссикасар_             |
+| post.lat | _кьацагьа_               | _ссикагьа_             |
+| post.ess | _кьацагьаб_              | _ссикагьаб_            |
+| post.dir | _кьацагьабал_            | _ссикагьабал_          |
+| post.el  | _кьацагьар_              | _ссикагьар_            |
+| in.lat   | _кьацацци_               | _ссикацци_             |
+| in.ess   | _кьацацциб_              | _ссикацциб_            |
+| in.dir   | _кьацаццибал_            | _ссикаццибал_          |
+| in.el    | _кьацаццир_              | _ссикаццир_            |
+
+:::
+
+### Операторы
+
+Квантификация напоминает регулярные выражения:
+
+- `?` --- ноль или один раз
+- `*` --- ноль и более раз [^why_star]
+- `+` --- один и более раз
+
+[^why_star]: Мы какое-то время думали, зачем это может быть нужно и придумали только странные сценарии типа *пра-пра-пра-пра-бабушка*. Но вообще это порождает циклы, от которых одни проблемы.
+
+::: {.panel-tabset}
+
+###### с оператором
+
+```{{lexd}}
+PATTERNS
+Root Negation?
+
+LEXICON Root
+...
+
+LEXICON Negation
+...
+```
+
+###### без оператора
+
+```{{lexd}}
+PATTERNS
+Root
+Root Negation
+
+LEXICON Root
+...
+
+LEXICON Negation
+...
+```
+
+:::
+
+- `|` --- оператор или (можно с пробелами вокруг)
+
+::: {.panel-tabset}
+
+###### с оператором
+
+```{{lexd}}
+PATTERNS
+Root PastInflection|PresentInflection
+
+LEXICON Root
+...
+
+LEXICON PastInflection
+...
+
+LEXICON PresentInflection
+...
+```
+
+###### без оператора
+
+```{{lexd}}
+PATTERNS
+Root PastInflection
+Root PresentInflection
+
+LEXICON Root
+...
+
+LEXICON PastInflection
+...
+
+LEXICON PresentInflection
+...
+```
+
+:::
+
+- Кроме того есть операторы, названные в матералах `lexd` ситом, `>` и `<`:
+
+::: {.panel-tabset}
+
+###### с оператором
+
+```{{lexd}}
+PATTERNS
+VerbRoot > TAM > CLITICS
+
+LEXICON Root
+...
+
+LEXICON TAM
+...
+
+LEXICON CLITICS
+...
+```
+
+###### без оператора
+
+```{{lexd}}
+PATTERNS
+VerbRoot
+VerbRoot TAM
+VerbRoot TAM CLITICS
+
+LEXICON Root
+...
+
+LEXICON TAM
+...
+
+LEXICON CLITICS
+...
+```
+
+:::
+
+### Анонимные разделы {#sec-anonymous}
+
+Некоторые фрагменты аннотации можно вставлять прямо в раздел `PATTERNS`. Для этого используются квадртные скобки.
+
+::: {.panel-tabset}
+
+###### сокращенный вариант
+
+```{{lexd}}
+PATTERNS
+NounStem [<n>:] NounNumber
+
+LEXICON NounStem
+sock
+ninja
+
+LEXICON NounNumber
+<sg>:
+<pl>:s
+```
+
+###### развернутый вариант 1
+
+```{{lexd}}
+PATTERNS
+NounStem NounNumber
+
+LEXICON NounStem
+sock<n>:sock
+ninja<n>:ninja
+
+LEXICON NounNumber
+<sg>:
+<pl>:s
+```
+
+###### развернутый вариант 2
+
+```{{lexd}}
+PATTERNS
+NounStem NounTag NounNumber
+
+LEXICON NounTag             # <1>
+<n>:
+
+LEXICON NounStem
+sock
+ninja
+
+LEXICON NounNumber
+<sg>:
+<pl>:s
+```
+
+1. Новый раздел `LEXICON`.
+
+:::
+
+В мануале это трюк назван *Anonymous LEXICON*, видимо, потому что предполагается, что мы таким образом избегаем создания дополнительного раздела `LEXICON` (см. развернутый пример 2).
+
+По аналогии с анонимным разделом `LEXICON` есть анонимный раздел `PATTERN`. Для этого используются круглые скобки.
+
+::: {.panel-tabset}
+
+###### сокращенный вариант
+
+```{{lexd}}
+PATTERNS
+(VerbRoot Causative?) | AuxRoot Tense PersonNumber
+
+LEXICON VerbRoot
+...
+
+LEXICON Causative
+...
+
+LEXICON AuxRoot
+...
+
+LEXICON Tense 
+...
+
+LEXICON PersonNumber
+...
+```
+
+###### развернутый вариант
+
+```{{lexd}}
+PATTERNS
+VerbStem | AuxRoot Tense PersonNumber
+
+PATTERN VerbStem              # <1>
+VerbRoot Causative?
+
+LEXICON VerbRoot
+...
+
+LEXICON Causative
+...
+
+LEXICON AuxRoot
+...
+
+LEXICON Tense 
+...
+
+LEXICON PersonNumber
+...
+```
+
+1. Новый раздел `PATTERN`.
+
+:::
+
+### Теги
+
+На содержимое разделов `LEXICON` можно вешать теги. Это может быть полезно, например, для моделирования словоизменительных классов. Рассмотрим пример из русского языка (славянские, индоевропейские):
+
+```{{lexd}}
+PATTERNS
+NounStem[hard] Inflection[hard]
+NounStem[soft] Inflection[soft]
+
+LEXICON NounStem
+мама:мам[hard]
+папа:пап[hard]
+няня:нян[soft]
+Таня:Тан[soft]
+
+LEXICON Inflection
+<nom><sg>:а[hard]
+<nom><sg>:я[soft]
+<gen><sg>:ы[hard]
+<gen><sg>:и[soft]
+```
+
+То же самое можно записать при помощи одного тега, используя операцию отмены тега:
+
+```{{lexd}}
+PATTERNS
+NounStem[hard] Inflection[hard]
+NounStem[-hard] Inflection[-hard]
+
+LEXICON NounStem
+мама:мам[hard]
+папа:пап[hard]
+няня:нян
+буря:бур
+
+LEXICON Inflection
+<nom><sg>:а[hard]
+<nom><sg>:я
+<gen><sg>:ы[hard]
+<gen><sg>:и
+```
+
+Однако в русском языке можно найти аффиксы, которые присоединяются к обоим типам основ, в таком случае, придется усложнить наше описание:
+
+```{{lexd}}
+PATTERNS
+NounStem[hard] Inflection[hard]
+NounStem[soft] Inflection[soft]
+NounStem Inflection[-hard,-soft]
+
+LEXICON NounStem
+мама:мам[hard]
+папа:пап[hard]
+няня:нян[soft]
+Таня:Тан[soft]
+
+LEXICON Inflection
+<nom><sg>:а[hard]
+<nom><sg>:я[soft]
+<gen><sg>:ы[hard]
+<gen><sg>:и[soft]
+<pos>:ин
+```
+
+Авторы `lexd` добавили возможность взаимодействия тегов, чтобы не надо было писать одно и то же.
+
+- `(A B)[x]  = (A[x] B) | (A B[x])`
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+(A B)[x]
+
+LEXICON A
+aaa[x]
+bbb
+
+LEXICON B
+AAA[x]
+BBB
+```
+
+###### результат
+
+```
+aaaAAA
+aaaBBB
+bbbAAA
+```
+:::
+
+- `(A B)[-x] = A[-x] B[-x]`
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+(A B)[-x]
+
+LEXICON A
+aaa[x]
+bbb
+
+LEXICON B
+AAA[x]
+BBB
+```
+
+###### результат
+
+```
+bbbBBB
+```
+:::
+
+- `A[|[x,y]] = A[x] | A[y]`
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+A[|[x,y]]
+
+LEXICON A
+aaa[x]
+bbb[y]
+ccc
+```
+
+###### результат
+
+```
+aaa
+bbb
+```
+:::
+
+- `A[^[x,y]] = A[x,-y] | A[-x,y]`
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+A[^[x,y]]
+
+LEXICON A
+aaa[x]
+bbb[y]
+ccc[z]
+ddd[x,y]
+eee[x,z]
+fff[y,z]
+ggg
+```
+
+###### результат
+
+```
+aaa
+eee
+bbb
+fff 
+```
+:::
+
+`^` --- очень полезный оператор, который позволяет смоделировать согласование по признакам 
+
+`(A B)[^[x,y]] = (A[x,-y] B[x,-y]) | (A[-x,y] B[-x, y])`:
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+(A B)[^[x,y]]
+
+LEXICON A
+aaa[x]
+bbb[y]
+ccc
+
+LEXICON B
+AAA[x]
+BBB[y]
+CCC
+```
+
+###### результат
+
+```
+aaaAAA
+aaaCCC
+cccAAA
+cccBBB
+bbbCCC
+bbbBBB
+```
+:::
+
+Это позволяет смоделировать наш русский пример одной строчкой:
+
+::: {.panel-tabset}
+
+###### с оператором
+
+```{{lexd}}
+PATTERNS
+(NounStem Inflection)[^[hard,soft]]
+
+LEXICON NounStem
+мама:мам[hard]
+папа:пап[hard]
+няня:нян[soft]
+Таня:Тан[soft]
+
+LEXICON Inflection
+<nom><sg>:а[hard]
+<nom><sg>:я[soft]
+<gen><sg>:ы[hard]
+<gen><sg>:и[soft]
+<pos>:ин
+```
+
+###### старый вариант
+
+```{{lexd}}
+PATTERNS
+NounStem[hard] Inflection[hard]
+NounStem[soft] Inflection[soft]
+NounStem Inflection[-hard,-soft]
+
+LEXICON NounStem
+мама:мам[hard]
+папа:пап[hard]
+няня:нян[soft]
+Таня:Тан[soft]
+
+LEXICON Inflection
+<nom><sg>:а[hard]
+<nom><sg>:я[soft]
+<gen><sg>:ы[hard]
+<gen><sg>:и[soft]
+<pos>:ин
+```
+:::
+
+
+::: {.callout-note}
+
+###### Задание 02_03
+
+Ниже представлен фрагмент финской (фино-угорские, уральские) парадигмы [@karlsson13], как видно, здесь слова двух словоизменительных типов. Попробуйте смоделировать представленную парадигму, используя теги.
+
+| glosses   | зал       | общежитие     | дверь    | зима       |
+|-----------|-----------|---------------|----------|------------|
+| nom.sg    | _sali_    | _hostelli_    | _ovi_    | _talvi_    |
+| acc.sg    | _sali_    | _hostelli_    | _ovi_    | _talvi_    |
+| gen.sg    | _salin_   | _hostellin_   | _oven_   | _talven_   |
+| prt.sg    | _salia_   | _hostellia_   | _ovea_   | _talvea_   |
+| in.ess.sg | _salissa_ | _hostellissa_ | _ovessa_ | _talvessa_ |
+| in.abl.sg | _salista_ | _hostellista_ | _ovesta_ | _talvesta_ |
+| at.ess.sg | _salilla_ | _hostellilla_ | _ovella_ | _talvella_ |
+| at.abl.sg | _salilta_ | _hostellilta_ | _ovelta_ | _talvelta_ |
+| at.all.sg | _salille_ | _hostellille_ | _ovelle_ | _talvelle_ |
+| frml.sg   | _salina_  | _hostellina_  | _ovena_  | _talvena_  |
+| trans.sg  | _saliksi_ | _hostelliksi_ | _oveksi_ | _talveksi_ |
+| priv.sg   | _salitta_ | _hostellitta_ | _ovetta_ | _talvetta_ |
+
+:::
+
+### Моделирование разрывных морфем: инфиксы, редупликация, семитские корни
+
+В разеделе `PATTERNS` можно перечислять разные стороны единиц (или входное и выходное значение), записанных в `LEXICON`[^split_pattern]. Это позволяет:
+
+- опускать либо глоссы, либо морфемы (полезно для моделирования редупликации);
+- иметь разный порядок глосс и морфем (но зачем?).
+
+[^split_pattern]: К сожалению, [нельзя](https://github.com/apertium/lexd/issues/31) делать аналогичное для единиц из разделов `PATTERN`.
+
+Вот пример моделирования дистрибутивных числительных (т. е. числительных со значением 'по Х') в зиловском андийском (андийские, нахско-дагестанские):
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+Numerals NumeralMarker
+NumeralReduplication :Numerals Numerals NumeralMarker NumeralDistributiveMarker
+
+LEXICON Numerals
+чIе               # числительное 2
+лъоб              # числительное 3
+ойлIи             # числительное 6
+
+LEXICON NumeralMarker
+<num>:гу
+
+LEXICON NumeralDistributiveMarker
+<distr>:
+
+LEXICON NumeralReduplication
+<rdp>:
+```
+
+###### результат
+
+```
+чIе<num>:чIегу
+лъоб<num>:лъобгу
+ойлIи<num>:ойлIигу
+<rdp>чIе<num><distr>:чIечIегу
+<rdp>лъоб<num><distr>:лъоблъобгу
+<rdp>ойлIи<num><distr>:ойлIиойлIигу
+```
+:::
+
+Кроме того для моделирования разрывных морфем, вводится номер в круглых скобках, а элементы морфемы перечисляются через пробел. Вот пример, из иврита (симитские, афразийские):
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+C(1) V(1) C(2) :V(2) C(3) V(2):
+
+LEXICON C(3)
+sh m r          # соблюдать, защищать
+y sh v          # садиться
+
+LEXICON V(2)
+:a <v><p3><sg>:a
+:o <v><pprs>:e
+```
+
+###### результат
+
+```
+shmr<v><p3><sg>:shamar
+shmr<v><pprs>:shomer
+yshb<v><p3><sg>:yashab
+yshb<v><pprs>:yosheb
+```
+:::
+
+::: {.callout-note}
+
+###### Задание 02_04
+
+Ниже даны количественные, кратные (со значение 'Х раз') и дистрибутивные (со значение 'по Х') числительные адыгейского языка (абхазо-адыгские) [@rogava1966: 79, 81]. Смоделируйте перечисленные формы:
+
+| значение | лемма  | количественные <br>\<card\> | кратные <br> \<adv\> | дистрибутивные <br> \<distr\> |
+|----------|--------|-----------------------------|----------------------|-------------------------------|
+| 1        | _зы_   | _зы_                        | _зэ_                 | _зырыз_                       |
+| 3        | _щы_   | _щы_                        | _щэ_                 | _щырыщ_                       |
+| 4        | _плIы_ | _плIы_                      | _плIэ_               | _плIырыплI_                   |
+| 5        | _тфы_  | _тфы_                       | _тфэ_                | _тфырытф_                     |
+| 6        | _хы_   | _хы_                        | _хэ_                 | _хырых_                       |
+| 10       | _пшIы_ | _пшIы_                      | _пшIэ_               | _пшIырыпшI_                   |
+
+:::
+
+### Регулярные выражения
+
+В разделе LEXICON допускаются регулярные выражения, для этого их нужно обромлять косыми чертами `/`:
+
+- группировка при помощи скобок `()`
+- квантификация при помощи `?`, `*`, и `+`. Объект квантификации должен быть обрамлен круглыми скобками.
+- логическое 'или' `|`
+- группы символов при помощи квадратных скобок `[]`
+- промежутки символов [a-z]
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+SomeLexicon
+
+LEXICON SomeLexicon
+/x(y|zz)?[n-p]/
+```
+
+###### результат
+
+```
+xyn
+xyo
+xyp
+xzzn
+xzzo
+xzzp
+xn
+xo
+xp
+```
+:::
+
+Это позволяет добавлять разбор неизвестных единиц в `lexd`. Важно отметить, что добавление некоторых типов регулярных выражение делает циклический трансдьюсер, поэтому результат такого трансдьюссера можно посмотреть только при помощи команд `make analysis FORM="..."` или `make generation FORM="..."`. 
+
+::: {.panel-tabset}
+
+###### `lexd`
+
+```{{lexd}}
+PATTERNS
+Stem Affix
+
+LEXICON Stem
+стол
+дом
+/([а-я])*/
+
+LEXICON Affix
+<nom><sg>:
+<gen><sg>:а
+<acc><sg>:
+<dat><sg>:у
+<ins><sg>:ом
+<loc><sg>:е
+```
+
+###### результат
+
+```{{shell}}
+$ make analysis FORM="комом"
+
+hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+Using HFST basic transducer format and performing slow lookups
+> комом	ком<ins><sg>	0,000000
+комом	комом<acc><sg>	0,000000
+комом	комом<nom><sg>	0,000000
+```
+:::

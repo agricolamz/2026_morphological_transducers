@@ -1,0 +1,39 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Конечные автоматы в морфологическом анализе 2025/2026"
+  author: 
+  - name: Т. Б. Казакова
+  - name: Г. А. Мороз
+  repo-url: https://github.com/agricolamz/2026_morphological_transducers/
+  chapters:
+    - index.qmd
+    - 01_introduction_to_transducers.qmd
+    - 02_introduction_to_lexd.qmd
+    - 03_phonological_rules.qmd
+    - 04_language_tasks.qmd
+    - 05_technical_class.qmd
+    - 06_transducer_manipulation.qmd
+    - 07_disambiguation.qmd
+    - 08_coverage.qmd
+    - 09_hygiene.qmd
+    - references.qmd
+
+callout-appearance: simple
+callout-icon: false
+bibliography: references.bib
+language: custom.yml
+execute: 
+  echo: false
+  warning: false
+fig-align: center
+
+format:
+  html:
+    theme: cosmo
+    lang: ru
+    page-layout: full
+    css: styles.css
+    df-print: paged

@@ -1,0 +1,18 @@
+PATTERNS
+Noun [<N>:] Suffix[-adj] | (Suffix[adj] AdjInflection)
+Noun [<N>:] NounInflection
+
+LEXICON Noun
+ночь
+печь
+
+LEXICON Suffix
+<dim>:ка
+<adj>:н[adj]
+
+LEXICON AdjInflection
+<m><sg><nom>:ой
+
+LEXICON NounInflection
+<nom>:
+<acc>:

@@ -1,0 +1,15 @@
+PATTERNS
+Preposition
+Noun
+Verb
+
+LEXICON Preposition
+в<pr>:в
+
+LEXICON Noun
+город<n><nom><sg>:город
+город<n><acc><sg>:город
+поезд<n><nom><sg>:поезд
+
+LEXICON Verb
+ехать<v><npst><p3><sg>:едет

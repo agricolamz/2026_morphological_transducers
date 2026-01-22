@@ -1,0 +1,5 @@
+/* Remove left border from blockquotes */
+blockquote {
+  border-left: none !important;
+  padding-left: 0 !important; /* Optional: Remove left padding */
+}

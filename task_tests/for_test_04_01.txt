@@ -1,0 +1,10 @@
+mokytis<inf><rfl>:mokytis
+didžiuotis<inf><rfl>:didžiuotis
+džiaugtis<inf><rfl>:džiaugtis
+žvalgytis<inf><rfl>:žvalgytis
+juoktis<inf><rfl>:juoktis
+<neg><rfl>mokytis<inf>:nesimokyti
+<neg><rfl>didžiuotis<inf>:nesididžiuoti
+<neg><rfl>džiaugtis<inf>:nesidžiaugti
+<neg><rfl>žvalgytis<inf>:nesižvalgyti
+<neg><rfl>juoktis<inf>:nesijuokti

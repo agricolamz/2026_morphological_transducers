@@ -1,0 +1,3 @@
+MAP (NEW_TAG) ("город" n) ;
+UNMAP UNSAFE (NEW_TAG) ;
+ADD (ANOTHER_TAG) ("город" n) ;

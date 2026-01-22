@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Операции с трансдьюсерами – Конечные автоматы в морфологическом анализе 2025/2026</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07_disambiguation.html" rel="next">
+<link href="./05_technical_class.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-320ad5607646c56df2c4e55503b78b49.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Поиск не дал результатов",
+    "search-matching-documents-text": "Результаты поиска",
+    "search-copy-link-title": "Скопировать ссылку",
+    "search-hide-matches-text": "Скрыть дополнительные результаты",
+    "search-more-match-text": "дополнительный результат в этом документе",
+    "search-more-matches-text": "дополнительных результата(-ов) в этом документе",
+    "search-clear-button-title": "Очистить",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Отменить",
+    "search-submit-button-title": "Найти",
+    "search-label": "Поиск"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Переключить боковую панель навигации" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06_transducer_manipulation.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Операции с трансдьюсерами</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Переключить боковую панель навигации" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Поиск" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Конечные автоматы в морфологическом анализе 2025/2026</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/agricolamz/2026_morphological_transducers/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Поиск"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Введение</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_introduction_to_transducers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Автоматический морфологический анализ</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_introduction_to_lexd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Введение в <code>lexd</code>: морфология</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_phonological_rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Введение в <code>twol</code>: (мор)фонология</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_language_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Моделирование языковых явлений</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_technical_class.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Введение в командную строку</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_transducer_manipulation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Операции с трансдьюсерами</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_disambiguation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Введение в <code>cg3</code>: разрешение морфологической неоднозначности</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_coverage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Метрики качества</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_hygiene.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Как распространять работу?</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Список литературы</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Содержание</h2>
+   
+  <ul>
+  <li><a href="#некоторые-команды-hfst" id="toc-некоторые-команды-hfst" class="nav-link active" data-scroll-target="#некоторые-команды-hfst"><span class="header-section-number">6.1</span> Некоторые команды <code>hfst</code></a>
+  <ul class="collapse">
+  <li><a href="#hfst-fst2strings" id="toc-hfst-fst2strings" class="nav-link" data-scroll-target="#hfst-fst2strings"><span class="header-section-number">6.1.1</span> <code>hfst-fst2strings</code></a></li>
+  <li><a href="#hfst-fst2txt" id="toc-hfst-fst2txt" class="nav-link" data-scroll-target="#hfst-fst2txt"><span class="header-section-number">6.1.2</span> <code>hfst-fst2txt</code></a></li>
+  <li><a href="#hfst-summarise" id="toc-hfst-summarise" class="nav-link" data-scroll-target="#hfst-summarise"><span class="header-section-number">6.1.3</span> <code>hfst-summarise</code></a></li>
+  <li><a href="#hfst-name" id="toc-hfst-name" class="nav-link" data-scroll-target="#hfst-name"><span class="header-section-number">6.1.4</span> <code>hfst-name</code></a></li>
+  <li><a href="#hfst-dump-alphabets" id="toc-hfst-dump-alphabets" class="nav-link" data-scroll-target="#hfst-dump-alphabets"><span class="header-section-number">6.1.5</span> <code>hfst-dump-alphabets</code></a></li>
+  <li><a href="#hfst-substitute" id="toc-hfst-substitute" class="nav-link" data-scroll-target="#hfst-substitute"><span class="header-section-number">6.1.6</span> <code>hfst-substitute</code></a></li>
+  <li><a href="#hfst-lookup" id="toc-hfst-lookup" class="nav-link" data-scroll-target="#hfst-lookup"><span class="header-section-number">6.1.7</span> <code>hfst-lookup</code></a></li>
+  <li><a href="#hfst-invert" id="toc-hfst-invert" class="nav-link" data-scroll-target="#hfst-invert"><span class="header-section-number">6.1.8</span> <code>hfst-invert</code></a></li>
+  <li><a href="#hfst-fst2fst" id="toc-hfst-fst2fst" class="nav-link" data-scroll-target="#hfst-fst2fst"><span class="header-section-number">6.1.9</span> <code>hfst-fst2fst</code></a></li>
+  <li><a href="#hfst-proc-и-hfst-proc2" id="toc-hfst-proc-и-hfst-proc2" class="nav-link" data-scroll-target="#hfst-proc-и-hfst-proc2"><span class="header-section-number">6.1.10</span> <code>hfst-proc</code> и <code>hfst-proc2</code></a></li>
+  <li><a href="#hfst-pair-test" id="toc-hfst-pair-test" class="nav-link" data-scroll-target="#hfst-pair-test"><span class="header-section-number">6.1.11</span> <code>hfst-pair-test</code></a></li>
+  <li><a href="#hfst-kill-paths" id="toc-hfst-kill-paths" class="nav-link" data-scroll-target="#hfst-kill-paths"><span class="header-section-number">6.1.12</span> <code>hfst-kill-paths</code></a></li>
+  </ul></li>
+  <li><a href="#некоторые-операции-с-двумя-трансдьюсерами" id="toc-некоторые-операции-с-двумя-трансдьюсерами" class="nav-link" data-scroll-target="#некоторые-операции-с-двумя-трансдьюсерами"><span class="header-section-number">6.2</span> Некоторые операции с двумя трансдьюсерами</a>
+  <ul class="collapse">
+  <li><a href="#hfst-compare" id="toc-hfst-compare" class="nav-link" data-scroll-target="#hfst-compare"><span class="header-section-number">6.2.1</span> <code>hfst-compare</code></a></li>
+  <li><a href="#hfst-concatenate" id="toc-hfst-concatenate" class="nav-link" data-scroll-target="#hfst-concatenate"><span class="header-section-number">6.2.2</span> <code>hfst-concatenate</code></a></li>
+  <li><a href="#hfst-conjunct-или-hfst-intersect" id="toc-hfst-conjunct-или-hfst-intersect" class="nav-link" data-scroll-target="#hfst-conjunct-или-hfst-intersect"><span class="header-section-number">6.2.3</span> <code>hfst-conjunct</code> или <code>hfst-intersect</code></a></li>
+  <li><a href="#hfst-disjunct-или-hfst-union" id="toc-hfst-disjunct-или-hfst-union" class="nav-link" data-scroll-target="#hfst-disjunct-или-hfst-union"><span class="header-section-number">6.2.4</span> <code>hfst-disjunct</code> или <code>hfst-union</code></a></li>
+  <li><a href="#hfst-subtract-или-hfst-minus" id="toc-hfst-subtract-или-hfst-minus" class="nav-link" data-scroll-target="#hfst-subtract-или-hfst-minus"><span class="header-section-number">6.2.5</span> <code>hfst-subtract</code> или <code>hfst-minus</code></a></li>
+  </ul></li>
+  <li><a href="#создание-транслитераторов" id="toc-создание-транслитераторов" class="nav-link" data-scroll-target="#создание-транслитераторов"><span class="header-section-number">6.3</span> Создание транслитераторов</a></li>
+  <li><a href="#перевод-основы" id="toc-перевод-основы" class="nav-link" data-scroll-target="#перевод-основы"><span class="header-section-number">6.4</span> Перевод основы</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Операции с трансдьюсерами</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Посмотрим на следующий трансдьюсер.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{lexd}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="in">PATTERNS</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="in">Noun [&lt;N&gt;:] Suffix[-adj] | (Suffix[adj] AdjInflection)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="in">Noun [&lt;N&gt;:] NounInflection</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON Noun</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="in">ночь</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="in">печь</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON Suffix</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;dim&gt;:ка</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;adj&gt;:н[adj]</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON AdjInflection</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ой</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON NounInflection</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;nom&gt;:</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;acc&gt;:</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{twol}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="in">Alphabet</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="in">  а е й к н о п ч ь ь:0;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="in">Rules</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="in">"чк чн пишется без ь"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="in">! например, ночьной -&gt; ночной или печька -&gt; печка</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="in">ь:0 &lt;=&gt; _ к;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="in">        _ н;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> lexd example.lexd <span class="kw">|</span> <span class="ex">hfst-txt2fst</span> <span class="at">-o</span> lexd.hfst</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-twolc <span class="at">-q</span> example.twol <span class="at">-o</span> twol.hfst</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compose-intersect lexd.hfst twol.hfst <span class="at">-o</span> generator.hfst</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="некоторые-команды-hfst" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="некоторые-команды-hfst"><span class="header-section-number">6.1</span> Некоторые команды <code>hfst</code></h2>
+<p>В большинстве команд ниже работают флаги <code>-i</code> — входящий файл; <code>-o</code> — исходящий файл. Если <code>-o</code> отсутствует, то результат печатается в консоль.</p>
+<section id="hfst-fst2strings" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="hfst-fst2strings"><span class="header-section-number">6.1.1</span> <code>hfst-fst2strings</code></h3>
+<p>Печатает формы:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-fst2strings generator.hfst</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="30154c7b" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь&lt;N&gt;&lt;dim&gt;:ночка
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночной
+ночь&lt;N&gt;&lt;nom&gt;:ночь
+ночь&lt;N&gt;&lt;acc&gt;:ночь
+печь&lt;N&gt;&lt;dim&gt;:печка
+печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печной
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;acc&gt;:печь</code></pre>
+</div>
+</div>
+<p>Также существует программа <code>hfst-expand</code>, которая делает то же самое.</p>
+</section>
+<section id="hfst-fst2txt" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="hfst-fst2txt"><span class="header-section-number">6.1.2</span> <code>hfst-fst2txt</code></h3>
+<p>Печатает трансдьюсер в AT&amp;T формате:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-fst2txt generator.hfst</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="68c47b4f" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-stdout">
+<pre><code>0   1   @0@ @0@ 0.000000
+1   2   н   н   0.000000
+1   3   п   п   0.000000
+2   4   о   о   0.000000
+3   4   е   е   0.000000
+4   5   ч   ч   0.000000
+5   6   ь   @0@ 0.000000
+5   7   ь   ь   0.000000
+6   8   &lt;N&gt; @0@ 0.000000
+7   9   &lt;N&gt; @0@ 0.000000
+8   10  &lt;nom&gt;   @0@ 0.000000
+8   10  &lt;acc&gt;   @0@ 0.000000
+8   11  &lt;dim&gt;   к   0.000000
+8   12  &lt;adj&gt;   н   0.000000
+9   13  &lt;nom&gt;   @0@ 0.000000
+9   13  &lt;acc&gt;   @0@ 0.000000
+11  14  @0@ а   0.000000
+12  15  &lt;m&gt; о   0.000000
+13  16  @0@ @0@ 0.000000
+14  16  @0@ @0@ 0.000000
+15  17  &lt;sg&gt;    й   0.000000
+16  0.000000
+17  14  &lt;nom&gt;   @0@ 0.000000</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-summarise" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="hfst-summarise"><span class="header-section-number">6.1.3</span> <code>hfst-summarise</code></h3>
+<p>Данная программа печатает саммари для трансдьюсера.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-summarise generator.hfst</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="78dbd2a0" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>name: "compose(text(&lt;stdin&gt;), intersect(examples/twol.hfst))"
+fst type: OpenFST
+arc type: tropical
+input symbol table: yes
+output symbol table: yes
+# of states: 18
+# of arcs: 22
+initial state: 0
+# of final states: 1
+# of input/output epsilons: 3
+# of input epsilons: 4
+# of output epsilons: 11
+# of ... accessible states: ???
+# of ... coaccessible states: ???
+# of ... connected states: ???
+# of ... strongly conn components: ???
+expanded: ???
+mutable: yes
+acceptor: no
+input deterministic: no
+output deterministic: no
+input label sorted: ???
+output label sorted: ???
+weighted: yes
+cyclic: no
+cyclic at initial state: no
+topologically sorted: ???
+accessible: ???
+coaccessible: ???
+string: ???
+minimised: ???
+
+Read 1 transducers in total.</code></pre>
+</div>
+</div>
+<p>Если вам не хочется смотреть на выдачу целиком, можно совмещать с <code>grep</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-summarise generator.hfst <span class="kw">|</span> <span class="fu">grep</span> cyclic</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0884db06" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>cyclic: no
+cyclic at initial state: no</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-name" class="level3" data-number="6.1.4">
+<h3 data-number="6.1.4" class="anchored" data-anchor-id="hfst-name"><span class="header-section-number">6.1.4</span> <code>hfst-name</code></h3>
+<p>Если хочется, чтобы у трансдьюсера было осмысленное имя, то можно при создании дать ему имя при помощи функции <code>hfst-name</code> или <code>hfst-edit-metadata</code>. Посмотреть имя трансдьюсера можно при помощи аргумента <code>-p</code> (и некоторых других):</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compose-intersect lexd.hfst twol.hfst <span class="kw">|</span> <span class="ex">hfst-name</span> <span class="at">-n</span> <span class="st">'the best fst ever'</span> <span class="at">-o</span> generator.hfst</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-name <span class="at">-p</span> generator.hfst</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="65f0c230" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-stdout">
+<pre><code>"the best fst ever"</code></pre>
+</div>
+</div>
+<p>Программа <code>hfst-edit-metadata</code> позволяет настроить, например, следующие поля:</p>
+<ul>
+<li><code>--add=author=...</code></li>
+<li><code>--add=licence=...</code></li>
+<li><code>--add=name='...'</code></li>
+</ul>
+</section>
+<section id="hfst-dump-alphabets" class="level3" data-number="6.1.5">
+<h3 data-number="6.1.5" class="anchored" data-anchor-id="hfst-dump-alphabets"><span class="header-section-number">6.1.5</span> <code>hfst-dump-alphabets</code></h3>
+<p>Печатает алфавит:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-dump-alphabets generator.hfst</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="bfae7034" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;N&gt;
+&lt;acc&gt;
+&lt;adj&gt;
+&lt;dim&gt;
+&lt;m&gt;
+&lt;nom&gt;
+&lt;sg&gt;
+@_EPSILON_SYMBOL_@
+@_IDENTITY_SYMBOL_@
+@_UNKNOWN_SYMBOL_@
+а
+е
+й
+к
+н
+о
+п
+ч
+ь
+&lt;N&gt;
+&lt;acc&gt;
+&lt;adj&gt;
+&lt;dim&gt;
+&lt;m&gt;
+&lt;nom&gt;
+&lt;sg&gt;
+@_EPSILON_SYMBOL_@
+а
+е
+й
+к
+н
+о
+п
+ч
+ь</code></pre>
+</div>
+</div>
+<p>Мне не очень понятно, почему он печатает все два раза, однако этот фрагмент документации намекает мне, что это решаемая проблема:</p>
+<pre><code>Alphabet dump options:
+  -1, --exclude-seen       Ignore alphabets seen in automaton
+  -2, --exclude-metadata   Ignore alphabets from headers</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-dump-alphabets <span class="at">-1</span> generator.hfst</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="3b326368" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;N&gt;
+&lt;acc&gt;
+&lt;adj&gt;
+&lt;dim&gt;
+&lt;m&gt;
+&lt;nom&gt;
+&lt;sg&gt;
+@_EPSILON_SYMBOL_@
+@_IDENTITY_SYMBOL_@
+@_UNKNOWN_SYMBOL_@
+а
+е
+й
+к
+н
+о
+п
+ч
+ь</code></pre>
+</div>
+</div>
+<p>Также при помощи программы <code>grep</code> полезно проверить какие-нибудь символы:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-dump-alphabets <span class="at">-1</span> generator.hfst <span class="kw">|</span> <span class="fu">grep</span> ъ</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-dump-alphabets <span class="at">-1</span> generator.hfst <span class="kw">|</span> <span class="fu">grep</span> к</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="c180e5ec" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>к</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-substitute" class="level3" data-number="6.1.6">
+<h3 data-number="6.1.6" class="anchored" data-anchor-id="hfst-substitute"><span class="header-section-number">6.1.6</span> <code>hfst-substitute</code></h3>
+<p>Заменяет единицы в трансдьюсере (<code>-f</code> from; <code>-t</code> to):</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-substitute <span class="at">-f</span> <span class="st">"ч"</span> <span class="at">-t</span> <span class="st">"Ч"</span> <span class="at">-i</span> generator.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1e4c3d31" class="cell" data-execution_count="11">
+<div class="cell-output cell-output-stdout">
+<pre><code>ноЧь&lt;N&gt;&lt;dim&gt;:ноЧка
+ноЧь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ноЧной
+ноЧь&lt;N&gt;&lt;nom&gt;:ноЧь
+ноЧь&lt;N&gt;&lt;acc&gt;:ноЧь
+пеЧь&lt;N&gt;&lt;dim&gt;:пеЧка
+пеЧь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:пеЧной
+пеЧь&lt;N&gt;&lt;nom&gt;:пеЧь
+пеЧь&lt;N&gt;&lt;acc&gt;:пеЧь</code></pre>
+</div>
+</div>
+<p>Можно заменять конкретные соответствия (строчки в AT&amp;T записи).</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-substitute <span class="at">-f</span> <span class="st">"ь:@0@"</span> <span class="at">-t</span> <span class="st">"ъ:ъ"</span> <span class="at">-i</span> generator.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="a4a068ab" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночъ&lt;N&gt;&lt;dim&gt;:ночъка
+ночъ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночъной
+ночь&lt;N&gt;&lt;nom&gt;:ночь
+ночь&lt;N&gt;&lt;acc&gt;:ночь
+ночъ&lt;N&gt;&lt;dim&gt;:ночъка
+ночъ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночъной
+печъ&lt;N&gt;&lt;dim&gt;:печъка
+печъ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печъной
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;acc&gt;:печь
+печъ&lt;N&gt;&lt;dim&gt;:печъка
+печъ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печъной</code></pre>
+</div>
+</div>
+<p>Важно отметить, что в таком случае не работает расписывание <code>ъ</code> -&gt; <code>ъ:ъ</code>.</p>
+<p>Если хочется чего-то удалить, то следует использовать запись <code>@0@</code> или <code>@_EPSILON_SYMBOL_@</code>:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-substitute <span class="at">-f</span> <span class="st">"ч"</span> <span class="at">-t</span> <span class="st">"@0@"</span> <span class="at">-i</span> generator.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="4b06c9d1" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-stdout">
+<pre><code>ноь&lt;N&gt;&lt;dim&gt;:нока
+ноь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ноной
+ноь&lt;N&gt;&lt;nom&gt;:ноь
+ноь&lt;N&gt;&lt;acc&gt;:ноь
+пеь&lt;N&gt;&lt;dim&gt;:пека
+пеь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:пеной
+пеь&lt;N&gt;&lt;nom&gt;:пеь
+пеь&lt;N&gt;&lt;acc&gt;:пеь</code></pre>
+</div>
+</div>
+<p>Замены можно делать по списку, для этого нужно иметь <code>.tsv</code> файл. Ниже содержимое файла <code>label_file.tsv</code>:</p>
+<pre><code>&lt;N&gt; @_EPSILON_SYMBOL_@
+&lt;acc&gt;   @_EPSILON_SYMBOL_@
+&lt;adj&gt;   @_EPSILON_SYMBOL_@
+&lt;dim&gt;   @_EPSILON_SYMBOL_@
+&lt;m&gt; @_EPSILON_SYMBOL_@
+&lt;nom&gt;   @_EPSILON_SYMBOL_@
+&lt;sg&gt;    @_EPSILON_SYMBOL_@</code></pre>
+<p>Мы можем удалить все теги и получить соответствие основы-формы:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-substitute <span class="at">-F</span> label_file.tsv <span class="at">-i</span> generator.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="28ed2c9b" class="cell" data-execution_count="14">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь:ночка
+ночь:ночной
+ночь
+ночь
+печь:печка
+печь:печной
+печь
+печь</code></pre>
+</div>
+</div>
+<p>Опытным путем я выяснил, что это команда не будет работать с записью <code>@0@</code>.</p>
+</section>
+<section id="hfst-lookup" class="level3" data-number="6.1.7">
+<h3 data-number="6.1.7" class="anchored" data-anchor-id="hfst-lookup"><span class="header-section-number">6.1.7</span> <code>hfst-lookup</code></h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночь&lt;N&gt;&lt;dim&gt;"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> generator.hfst</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="c6189eb1" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ночь&lt;N&gt;&lt;dim&gt;   ночка   0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Кроме того, можно на вход подавать несколько форм, разделяя их переносом строки (<code>\n</code>), или программой <code>cat</code> читать из файла:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;\nночь&lt;N&gt;&lt;dim&gt;"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> generator.hfst</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="43c62594" class="cell" data-execution_count="16">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt; ночной  0,000000
+
+
+
+&gt; ночь&lt;N&gt;&lt;dim&gt;   ночка   0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Важно также отметить, что при помощи флага <code>-O</code> можно задать тип, в котором нужно печатать результат:</p>
+<ul>
+<li><code>xerox</code></li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;\nночь&lt;N&gt;&lt;dim&gt;"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> <span class="at">-O</span> xerox generator.hfst</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="8b89f547" class="cell" data-execution_count="17">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt; ночной  0,000000
+
+
+
+&gt; ночь&lt;N&gt;&lt;dim&gt;   ночка   0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<ul>
+<li><code>cg</code> — Constraint Grammar</li>
+</ul>
+<div class="sourceCode" id="cb34"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;\nночь&lt;N&gt;&lt;dim&gt;"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> <span class="at">-O</span> cg generator.hfst</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="097d9542" class="cell" data-execution_count="18">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; "&lt;ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;&gt;"
+
+    "ночной"    0,000000
+
+
+
+&gt; "&lt;ночь&lt;N&gt;&lt;dim&gt;&gt;"
+
+    "ночка" 0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<ul>
+<li><code>apertium</code></li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;\nночь&lt;N&gt;&lt;dim&gt;"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> <span class="at">-O</span> apertium generator.hfst</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="61d7ad3d" class="cell" data-execution_count="19">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ^ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;/*ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;$
+
+&gt; ^ночь&lt;N&gt;&lt;dim&gt;/*ночь&lt;N&gt;&lt;dim&gt;$
+
+&gt; </pre>
+</div>
+</div>
+</div>
+</section>
+<section id="hfst-invert" class="level3" data-number="6.1.8">
+<h3 data-number="6.1.8" class="anchored" data-anchor-id="hfst-invert"><span class="header-section-number">6.1.8</span> <code>hfst-invert</code></h3>
+<p>Это очень полезная функция, так как она позволяет переворачивать трансдьюсер. В прошлом разделе мы видели генератор, а что если мы хотим наоборот - не генератор, а анализатор?</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-invert generator.hfst <span class="at">-o</span> analyzer.hfst</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночка"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> analyzer.hfst</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0d42a561" class="cell" data-execution_count="20">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ночка  ночь&lt;N&gt;&lt;dim&gt;    0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Любой трансдьюсер обратим — и это очень классно: вы делаете один объект, а он и анализатор, и генератор.</p>
+</section>
+<section id="hfst-fst2fst" class="level3" data-number="6.1.9">
+<h3 data-number="6.1.9" class="anchored" data-anchor-id="hfst-fst2fst"><span class="header-section-number">6.1.9</span> <code>hfst-fst2fst</code></h3>
+<p>Возможно, Вы заметили предупреждение, которое возвращает <code>hfst-lookup</code>. Оптимизированный формат можно сделать при помощи программы <code>hfst-fst2fst</code>, он полезен и для других программ <code>hfst</code>.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-fst2fst <span class="at">-O</span> analyzer.hfst <span class="at">-o</span> analyzer.hfstol</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночка"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> analyzer.hfstol</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="5c929a55" class="cell" data-execution_count="21">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ночка  ночь&lt;N&gt;&lt;dim&gt;    0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Программа <code>hfst-lookup</code> больше не выдает предупреждения. Еще более ожидаемый вывод будет, если использовать программу <code>hfst-optimized-lookup</code>:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ночка"</span> <span class="kw">|</span> <span class="ex">hfst-optimized-lookup</span> analyzer.hfstol</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="df9e752c" class="cell" data-execution_count="22">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночка   ночь&lt;N&gt;&lt;dim&gt;
+</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-proc-и-hfst-proc2" class="level3" data-number="6.1.10">
+<h3 data-number="6.1.10" class="anchored" data-anchor-id="hfst-proc-и-hfst-proc2"><span class="header-section-number">6.1.10</span> <code>hfst-proc</code> и <code>hfst-proc2</code></h3>
+<p>Программа <code>hfst-proc</code> парсит текст. Важно, чтобы трансдьюсер был в оптимизированной форме, т. е. <code>.hfstol</code>. Обратите внимание на то, как экранируется восклицательный знак.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то Ночка и ПЕЧЬ\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc</span> analyzer.hfstol</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1c8bcf55" class="cell" data-execution_count="23">
+<div class="cell-output cell-output-stdout">
+<pre><code>^какая/*какая$-^то/*то$ ^Ночка/Ночь&lt;N&gt;&lt;dim&gt;$ ^и/*и$ ^ПЕЧЬ/ПЕЧЬ&lt;N&gt;&lt;acc&gt;/ПЕЧЬ&lt;N&gt;&lt;nom&gt;$!</code></pre>
+</div>
+</div>
+<p>Разные аргументы форматируют по-разному выдачу:</p>
+<ul>
+<li><code>-C</code>/<code>--cg</code> Constraint Grammar</li>
+</ul>
+<div class="sourceCode" id="cb42"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то Ночка и ПЕЧЬ\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc</span> <span class="at">-C</span> analyzer.hfstol</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="06b6c672" class="cell" data-execution_count="24">
+<div class="cell-output cell-output-stdout">
+<pre><code>"&lt;какая&gt;"
+    "*какая"
+"&lt;то&gt;"
+    "*то"
+"&lt;Ночка&gt;"
+    "ночь"  N dim
+"&lt;и&gt;"
+    "*и"
+"&lt;ПЕЧЬ&gt;"
+    "печь"  N acc
+    "печь"  N nom</code></pre>
+</div>
+</div>
+<ul>
+<li><code>-x</code> Xerox</li>
+</ul>
+<div class="sourceCode" id="cb44"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то Ночка и ПЕЧЬ\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc</span> <span class="at">-x</span> analyzer.hfstol</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d0bdf9c0" class="cell" data-execution_count="25">
+<div class="cell-output cell-output-stdout">
+<pre><code>какая   +?
+
+то  +?
+
+Ночка   Ночь&lt;N&gt;&lt;dim&gt;
+
+и   +?
+
+ПЕЧЬ    ПЕЧЬ&lt;N&gt;&lt;acc&gt;
+ПЕЧЬ    ПЕЧЬ&lt;N&gt;&lt;nom&gt;
+</code></pre>
+</div>
+</div>
+<ul>
+<li><code>-w</code> возвращать словарный вид слова, а не тот вид, в котором он встретился в тексте.</li>
+</ul>
+<div class="sourceCode" id="cb46"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то Ночка и ПЕЧЬ\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc</span> <span class="at">-xw</span> analyzer.hfstol</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="efede745" class="cell" data-execution_count="26">
+<div class="cell-output cell-output-stdout">
+<pre><code>какая   +?
+
+то  +?
+
+Ночка   ночь&lt;N&gt;&lt;dim&gt;
+
+и   +?
+
+ПЕЧЬ    печь&lt;N&gt;&lt;acc&gt;
+ПЕЧЬ    печь&lt;N&gt;&lt;nom&gt;
+</code></pre>
+</div>
+</div>
+<ul>
+<li>флаг <code>-N</code> позволяет настроить, сколько форм будет возвращаться при анализе, например ниже исчез разбор <code>ПЕЧЬ&lt;N&gt;&lt;nom&gt;</code>.</li>
+</ul>
+<div class="sourceCode" id="cb48"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то Ночка и ПЕЧЬ\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc</span> <span class="at">-xN</span> 1 analyzer.hfstol</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="3a9db72e" class="cell" data-execution_count="27">
+<div class="cell-output cell-output-stdout">
+<pre><code>какая   +?
+
+то  +?
+
+Ночка   Ночь&lt;N&gt;&lt;dim&gt;
+
+и   +?
+
+ПЕЧЬ    ПЕЧЬ&lt;N&gt;&lt;acc&gt;
+</code></pre>
+</div>
+</div>
+<p>Кроме того, существует программа <code>hfst-proc2</code>, которая, кажется, возвращает только то, что анализатор может проанализировать:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то ночка и печь\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc2</span> analyzer.hfstol</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="50728b7e" class="cell" data-execution_count="28">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночка
+печь
+</code></pre>
+</div>
+</div>
+<p>Флаг <code>-a</code> позволяет напечатать все:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то ночка и печь\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc2</span> <span class="at">-a</span> analyzer.hfstol</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="6e4b7941" class="cell" data-execution_count="29">
+<div class="cell-output cell-output-stdout">
+<pre><code>какая-то 
+ночка
+ и 
+печь
+\!
+</code></pre>
+</div>
+</div>
+<p>Флаг <code>-C</code> печатает в CoNLL-U:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"какая-то ночка и печь\!"</span> <span class="kw">|</span> <span class="ex">hfst-proc2</span> <span class="at">-С</span> analyzer.hfstol</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="4f12a924" class="cell" data-execution_count="30">
+<div class="cell-output cell-output-stdout">
+<pre><code>1   ночка   _   _   _   _   _   _   _   ночь&lt;N&gt;&lt;dim&gt;
+2   печь    _   _   _   _   _   _   _   печь&lt;N&gt;&lt;nom&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-pair-test" class="level3" data-number="6.1.11">
+<h3 data-number="6.1.11" class="anchored" data-anchor-id="hfst-pair-test"><span class="header-section-number">6.1.11</span> <code>hfst-pair-test</code></h3>
+<p>Эта программа проверяет <code>twol</code>:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"н о ч к а"</span> <span class="kw">|</span> <span class="ex">hfst-pair-test</span> twol.hfst</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="38afb343" class="cell" data-execution_count="31">
+<div class="cell-output cell-output-stdout">
+<pre><code>Test passed.</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"н о ч ь к а"</span> <span class="kw">|</span> <span class="ex">hfst-pair-test</span> twol.hfst</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2ca28ad0" class="cell" data-execution_count="32">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rule "чк чн пишется без ь" fails:
+#:0 н о ч HERE ---&gt; ь к а #:0 
+
+FAIL: н о ч ь к а REJECTED
+
+Test failed.</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"н о ч ь:0 к а"</span> <span class="kw">|</span> <span class="ex">hfst-pair-test</span> twol.hfst</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="338bedea" class="cell" data-execution_count="33">
+<div class="cell-output cell-output-stdout">
+<pre><code>Test passed.</code></pre>
+</div>
+</div>
+<p>Тесты могут быть отрицательными:</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"н о ч ь к а"</span> <span class="kw">|</span> <span class="ex">hfst-pair-test</span> <span class="at">-N</span> twol.hfst</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="e27b5483" class="cell" data-execution_count="34">
+<div class="cell-output cell-output-stdout">
+<pre><code>Test passed.</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"н о ч к а"</span> <span class="kw">|</span> <span class="ex">hfst-pair-test</span> <span class="at">-N</span> twol.hfst</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1eaa9766" class="cell" data-execution_count="35">
+<div class="cell-output cell-output-stdout">
+<pre><code>FAIL: н о ч к а PASSED
+
+Test failed.</code></pre>
+</div>
+</div>
+<p>Вообще стоит обратить внимание на мануал этой программы: она подробнее многих других программ <code>hfst</code>.</p>
+</section>
+<section id="hfst-kill-paths" class="level3" data-number="6.1.12">
+<h3 data-number="6.1.12" class="anchored" data-anchor-id="hfst-kill-paths"><span class="header-section-number">6.1.12</span> <code>hfst-kill-paths</code></h3>
+<p>Убирает все пути, содержащие некоторый символ:</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-kill-paths <span class="at">-S</span> о generator.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1296c296" class="cell" data-execution_count="36">
+<div class="cell-output cell-output-stdout">
+<pre><code>печь&lt;N&gt;&lt;acc&gt;:печь
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;dim&gt;:печка</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="некоторые-операции-с-двумя-трансдьюсерами" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="некоторые-операции-с-двумя-трансдьюсерами"><span class="header-section-number">6.2</span> Некоторые операции с двумя трансдьюсерами</h2>
+<p>Создадим себе второй очень похожий трансдьюсер:</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-substitute <span class="at">-f</span> <span class="st">"о"</span> <span class="at">-t</span> <span class="st">"О"</span> <span class="at">-i</span> generator.hfst <span class="kw">|</span> <span class="ex">hfst-name</span> <span class="at">-n</span> <span class="st">'transducer 2'</span> <span class="at">-o</span> generator2.hfst</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="hfst-compare" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="hfst-compare"><span class="header-section-number">6.2.1</span> <code>hfst-compare</code></h3>
+<p>Сравнивает трансдьюсеры</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compare generator.hfst generator.hfst</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1c4f0a79" class="cell" data-execution_count="38">
+<div class="cell-output cell-output-stdout">
+<pre><code>the best fst ever == the best fst ever</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compare generator.hfst generator2.hfst</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="020ce7b6" class="cell" data-execution_count="39">
+<div class="cell-output cell-output-stdout">
+<pre><code>the best fst ever != transducer 2</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compare generator.hfst analyzer.hfst</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="34f0e835" class="cell" data-execution_count="40">
+<div class="cell-output cell-output-stdout">
+<pre><code>the best fst ever != invert(the best fst ever)</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-concatenate" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="hfst-concatenate"><span class="header-section-number">6.2.2</span> <code>hfst-concatenate</code></h3>
+<p>Конкатенация трансдьюсеров - последнее состояние одного трансдьюсера становится начальным состоянием второго.</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-concatenate</span> generator.hfst generator2.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span> <span class="kw">|</span> <span class="fu">head</span> </span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0011feec" class="cell" data-execution_count="41">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь&lt;N&gt;&lt;dim&gt;нОчь&lt;N&gt;&lt;dim&gt;:ночканОчка
+ночь&lt;N&gt;&lt;dim&gt;нОчь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночканОчнОй
+ночь&lt;N&gt;&lt;dim&gt;нОчь&lt;N&gt;&lt;nom&gt;:ночканОчь
+ночь&lt;N&gt;&lt;dim&gt;нОчь&lt;N&gt;&lt;acc&gt;:ночканОчь
+ночь&lt;N&gt;&lt;dim&gt;печь&lt;N&gt;&lt;dim&gt;:ночкапечка
+ночь&lt;N&gt;&lt;dim&gt;печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночкапечнОй
+ночь&lt;N&gt;&lt;dim&gt;печь&lt;N&gt;&lt;nom&gt;:ночкапечь
+ночь&lt;N&gt;&lt;dim&gt;печь&lt;N&gt;&lt;acc&gt;:ночкапечь
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;нОчь&lt;N&gt;&lt;dim&gt;:ночнойнОчка
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;нОчь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночнойнОчнОй</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-conjunct-или-hfst-intersect" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="hfst-conjunct-или-hfst-intersect"><span class="header-section-number">6.2.3</span> <code>hfst-conjunct</code> или <code>hfst-intersect</code></h3>
+<p>Пересечение трансдьюсеров: выделяет общее для двух трансдьюсеров.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-conjunct</span> generator.hfst generator2.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="92f5dc10" class="cell" data-execution_count="42">
+<div class="cell-output cell-output-stdout">
+<pre><code>печь&lt;N&gt;&lt;dim&gt;:печка
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;acc&gt;:печь</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-disjunct-или-hfst-union" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="hfst-disjunct-или-hfst-union"><span class="header-section-number">6.2.4</span> <code>hfst-disjunct</code> или <code>hfst-union</code></h3>
+<p>Объединение трансдьюсеров.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-disjunct</span> generator.hfst generator2.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="8b1e4188" class="cell" data-execution_count="43">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь&lt;N&gt;&lt;dim&gt;:ночка
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночной
+ночь&lt;N&gt;&lt;nom&gt;:ночь
+ночь&lt;N&gt;&lt;acc&gt;:ночь
+печь&lt;N&gt;&lt;dim&gt;:печка
+печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печной
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;acc&gt;:печь
+нОчь&lt;N&gt;&lt;dim&gt;:нОчка
+нОчь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:нОчнОй
+нОчь&lt;N&gt;&lt;nom&gt;:нОчь
+нОчь&lt;N&gt;&lt;acc&gt;:нОчь
+печь&lt;N&gt;&lt;dim&gt;:печка
+печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печнОй
+печь&lt;N&gt;&lt;nom&gt;:печь
+печь&lt;N&gt;&lt;acc&gt;:печь</code></pre>
+</div>
+</div>
+</section>
+<section id="hfst-subtract-или-hfst-minus" class="level3" data-number="6.2.5">
+<h3 data-number="6.2.5" class="anchored" data-anchor-id="hfst-subtract-или-hfst-minus"><span class="header-section-number">6.2.5</span> <code>hfst-subtract</code> или <code>hfst-minus</code></h3>
+<p>Вычитание трансдьюсеров.</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-subtract</span> generator.hfst generator2.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="e3b6251b" class="cell" data-execution_count="44">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь&lt;N&gt;&lt;dim&gt;:ночка
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:ночной
+ночь&lt;N&gt;&lt;nom&gt;:ночь
+ночь&lt;N&gt;&lt;acc&gt;:ночь
+печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:печной</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="создание-транслитераторов" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="создание-транслитераторов"><span class="header-section-number">6.3</span> Создание транслитераторов</h2>
+<p>Для того, чтобы создать транслитерацию, давайте запишем наши соответствия в такой файл:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{lexd}</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a><span class="in">PATTERNS</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a><span class="in">segments</span></span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON segments</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a><span class="in">а:a</span></span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a><span class="in">е:e</span></span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a><span class="in">й:j</span></span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a><span class="in">к:k</span></span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a><span class="in">н:n</span></span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a><span class="in">о:o</span></span>
+<span id="cb83-12"><a href="#cb83-12" aria-hidden="true" tabindex="-1"></a><span class="in">п:p</span></span>
+<span id="cb83-13"><a href="#cb83-13" aria-hidden="true" tabindex="-1"></a><span class="in">ч:tʃ</span></span>
+<span id="cb83-14"><a href="#cb83-14" aria-hidden="true" tabindex="-1"></a><span class="in">ь:</span></span>
+<span id="cb83-15"><a href="#cb83-15" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;N&gt;</span></span>
+<span id="cb83-16"><a href="#cb83-16" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;acc&gt;</span></span>
+<span id="cb83-17"><a href="#cb83-17" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;adj&gt;</span></span>
+<span id="cb83-18"><a href="#cb83-18" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;dim&gt;</span></span>
+<span id="cb83-19"><a href="#cb83-19" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;m&gt;</span></span>
+<span id="cb83-20"><a href="#cb83-20" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;nom&gt;</span></span>
+<span id="cb83-21"><a href="#cb83-21" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;sg&gt;</span></span>
+<span id="cb83-22"><a href="#cb83-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> lexd correspondences.lexd <span class="kw">|</span> <span class="ex">hfst-txt2fst</span> <span class="at">-o</span> correspondences.hfst</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-fst2strings correspondences.hfst</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="3367e6d2" class="cell" data-execution_count="45">
+<div class="cell-output cell-output-stdout">
+<pre><code>а:a
+е:e
+й:j
+к:k
+н:n
+о:o
+п:p
+ч:tɕ
+ь:
+&lt;N&gt;
+&lt;acc&gt;
+&lt;adj&gt;
+&lt;dim&gt;
+&lt;m&gt;
+&lt;nom&gt;
+&lt;sg&gt;</code></pre>
+</div>
+</div>
+<p>Получившийся трансдьюсер делает достаточно скучную вещь: если ему дать один символ он его переведет, а вот большее количество — нет:</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"ч"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> correspondences.hfst</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="f5773290" class="cell" data-execution_count="46">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ч  tɕ  0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"че"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> correspondences.hfst</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="440a6bfb" class="cell" data-execution_count="47">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; че че+?    inf
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Чтобы наш трансдьюсер делал преобразования во всей строке, нужно его зациклить при помощи программы <code>hfst-repeat</code>:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> lexd correspondences.lexd <span class="kw">|</span> <span class="ex">hfst-txt2fst</span> <span class="kw">|</span> <span class="ex">hfst-repeat</span> <span class="at">-f</span> 1 <span class="at">-o</span> correspondences.hfst</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"ч"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> correspondences.hfst</span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="73435205" class="cell" data-execution_count="49">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ч  tɕ  0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"че"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> correspondences.hfst</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d4caf9e8" class="cell" data-execution_count="50">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; че tɕe 0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+<p>Чтобы соединить транслитератор с уже готовыми трансдьюсерами, достаточно сделать композицию:</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-compose</span> analyzer.hfst correspondences.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="f3565eba" class="cell" data-execution_count="51">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночка:notɕ&lt;N&gt;&lt;dim&gt;
+ночной:notɕ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;
+ночь:notɕ&lt;N&gt;&lt;nom&gt;
+ночь:notɕ&lt;N&gt;&lt;acc&gt;
+печка:petɕ&lt;N&gt;&lt;dim&gt;
+печной:petɕ&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;
+печь:petɕ&lt;N&gt;&lt;nom&gt;
+печь:petɕ&lt;N&gt;&lt;acc&gt;</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="ex">hfst-compose</span> generator.hfst correspondences.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="c2baf448" class="cell" data-execution_count="52">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночь&lt;N&gt;&lt;dim&gt;:notɕka
+ночь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:notɕnoj
+ночь&lt;N&gt;&lt;nom&gt;:notɕ
+ночь&lt;N&gt;&lt;acc&gt;:notɕ
+печь&lt;N&gt;&lt;dim&gt;:petɕka
+печь&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;:petɕnoj
+печь&lt;N&gt;&lt;nom&gt;:petɕ
+печь&lt;N&gt;&lt;acc&gt;:petɕ</code></pre>
+</div>
+</div>
+<p>А что если в ходе транслитерация графема чувствительна к контексту? Например, русское &lt;е&gt; может транскрибироваться как [e] (<em>мел</em>) и как [je] (<em>еда</em>). Я полагаю, у решения этой проблемы есть две стратегии:</p>
+<ul>
+<li>добавлять все соответствия в файл соответствий, например,</li>
+</ul>
+<pre><code>...
+че:tɕe
+пе:pʲe
+е:je
+...</code></pre>
+<ul>
+<li>добавлять еще один <code>twol</code> трансдьюсер, который исправляет какие-то вещи</li>
+</ul>
+<div class="sourceCode" id="cb96"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{lexd}</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="in">PATTERNS</span></span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="in">segments</span></span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON segments</span></span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a><span class="in">а:a</span></span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a><span class="in">е:{E}</span></span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a><span class="in">й:j</span></span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a><span class="in">к:k</span></span>
+<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a><span class="in">н:n</span></span>
+<span id="cb96-11"><a href="#cb96-11" aria-hidden="true" tabindex="-1"></a><span class="in">о:o</span></span>
+<span id="cb96-12"><a href="#cb96-12" aria-hidden="true" tabindex="-1"></a><span class="in">п:p</span></span>
+<span id="cb96-13"><a href="#cb96-13" aria-hidden="true" tabindex="-1"></a><span class="in">ч:tɕ</span></span>
+<span id="cb96-14"><a href="#cb96-14" aria-hidden="true" tabindex="-1"></a><span class="in">ь:</span></span>
+<span id="cb96-15"><a href="#cb96-15" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{twol}</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="in">Alphabet</span></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="in">  %{E%}:je</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a><span class="in">  %{E%}:e</span></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a><span class="in">  %{E%}:ʲe</span></span>
+<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a><span class="in">;</span></span>
+<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a><span class="in">Rules</span></span>
+<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a><span class="in">"E в начале слова"</span></span>
+<span id="cb97-10"><a href="#cb97-10" aria-hidden="true" tabindex="-1"></a><span class="in">%{E%}:je &lt;=&gt; .#. _ ;</span></span>
+<span id="cb97-11"><a href="#cb97-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-12"><a href="#cb97-12" aria-hidden="true" tabindex="-1"></a><span class="in">"E после мягких"</span></span>
+<span id="cb97-13"><a href="#cb97-13" aria-hidden="true" tabindex="-1"></a><span class="in">%{E%}:e &lt;=&gt; ɕ _ ;</span></span>
+<span id="cb97-14"><a href="#cb97-14" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-twolc <span class="at">-q</span> correspondences_twol.twol <span class="at">-o</span> correspondences_twol.hfst</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> lexd correspondences2.lexd <span class="kw">|</span> <span class="ex">hfst-txt2fst</span> <span class="kw">|</span> <span class="ex">hfst-repeat</span> <span class="at">-f</span> 1 <span class="kw">|</span> <span class="ex">hfst-compose-intersect</span> correspondences_twol.hfst <span class="at">-o</span> correspondences.hfst</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo <span class="st">"ечене"</span> <span class="kw">|</span> <span class="ex">hfst-lookup</span> correspondences.hfst</span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="eed039ea" class="cell" data-execution_count="53">
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-bold">hfst-lookup: </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+
+Using HFST basic transducer format and performing slow lookups
+
+&gt; ечене  jetɕenʲe    0,000000
+
+
+
+&gt; </pre>
+</div>
+</div>
+</div>
+</section>
+<section id="перевод-основы" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="перевод-основы"><span class="header-section-number">6.4</span> Перевод основы</h2>
+<p>Лингвисты в отличие от NLP-специалистов и компьютерных лингвистов предпочитают, чтобы основы в примерах, которые они приводят, были переведены. Этого можно достичь точно таким же набором инструментов, какой мы использовали при создании транслитератора. Создадим файл с соответствиями:</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{lexd}</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="in">PATTERNS</span></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="in">translations</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a><span class="in">LEXICON translations</span></span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a><span class="in">печь:stove</span></span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a><span class="in">ночь:night</span></span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;N&gt;</span></span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;acc&gt;</span></span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;adj&gt;</span></span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;dim&gt;</span></span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;m&gt;</span></span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;nom&gt;</span></span>
+<span id="cb99-14"><a href="#cb99-14" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;sg&gt;</span></span>
+<span id="cb99-15"><a href="#cb99-15" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{shell}</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> lexd ru_en.lexd <span class="kw">|</span> <span class="ex">hfst-txt2fst</span> <span class="kw">|</span> <span class="ex">hfst-repeat</span> <span class="at">-f</span> 1 <span class="at">-o</span> ru_en.hfst</span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> hfst-compose analyzer.hfst ru_en.hfst <span class="kw">|</span> <span class="ex">hfst-fst2strings</span></span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Скопировать текст" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="9fe3fc45" class="cell" data-execution_count="54">
+<div class="cell-output cell-output-stdout">
+<pre><code>ночка:night&lt;N&gt;&lt;dim&gt;
+ночной:night&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;
+ночь:night&lt;N&gt;&lt;nom&gt;
+ночь:night&lt;N&gt;&lt;acc&gt;
+печка:stove&lt;N&gt;&lt;dim&gt;
+печной:stove&lt;N&gt;&lt;adj&gt;&lt;m&gt;&lt;sg&gt;&lt;nom&gt;
+печь:stove&lt;N&gt;&lt;nom&gt;
+печь:stove&lt;N&gt;&lt;acc&gt;</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Скопировано");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Скопировано");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="./05_technical_class.html" class="pagination-link" aria-label="Введение в командную строку">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Введение в командную строку</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./07_disambiguation.html" class="pagination-link" aria-label="Введение в `cg3`: разрешение морфологической неоднозначности">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Введение в <code>cg3</code>: разрешение морфологической неоднозначности</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

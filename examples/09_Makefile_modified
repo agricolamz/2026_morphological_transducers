@@ -1,0 +1,15 @@
+analyzer_english_stem.hfst: analyzer.hfst 09_ru_en.lexd
+	lexd 09_ru_en.lexd | hfst-txt2fst | hfst-repeat -f 1 -o ru_en.hfst
+	hfst-compose analyzer.hfst ru_en.hfst -o analyzer_english_stem.hfst
+	rm ru_en.hfst
+
+analyzer.hfst: generator.hfst
+	hfst-invert generator.hfst -o analyzer.hfst
+
+generator.hfst: 09_example.lexd
+	hfst-twolc -q 09_example.twol -o twol.hfst
+	lexd 09_example.lexd | hfst-txt2fst | hfst-compose-intersect twol.hfst -o generator.hfst
+	rm twol.hfst
+
+clean: 
+	rm -f *.hfst

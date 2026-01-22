@@ -1,0 +1,17 @@
+big<comp>:bigger
+bright<comp>:brighter
+cheap<comp>:cheaper
+cold<comp>:colder
+deep<comp>:deeper
+hard<comp>:harder
+high<comp>:higher
+hot<comp>:hotter
+old<comp>:older
+rich<comp>:richer
+sad<comp>:sadder
+slick<comp>:slicker
+small<comp>:smaller
+soft<comp>:softer
+tall<comp>:taller
+thin<comp>:thinner
+wet<comp>:wetter

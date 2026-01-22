@@ -1,0 +1,810 @@
+# Введение в командную строку
+
+## Командная оболочка
+
+Когда вы открываете линуксовскую командную строку, чаще всего вы сталкиваетесь с интерпретатором `bash` –-- это командная оболочка, которая позволяет отдавать команды вашей операционной системе и компьютеру. В данных материалах мы используем обобщенное `shell`, включающее в себя разные командные оболочки. Так как обычно команды в командной строке исполняются сразу, знак доллара традиционно используют для обозначения строчки с командой:
+
+```{{shell}}
+$ echo "hi all"
+
+hi all
+```
+
+Разумеется, когда дело доходит до больших и сложных программ, то их записывают в скрипты, которым обычно дают расширение `.sh` и начинают с [шебанга](https://en.wikipedia.org/wiki/Shebang_(Unix)). Вот пример простой программы:
+
+```my_script.sh
+#!/bin/bash
+
+echo "Please enter your name: "
+read name
+echo "Nice to meet you $name"
+```
+
+Если записать эту программу в файл `my_script.sh`, то ее потом можно запустить следующей командой:
+
+```{{shell}}
+$ sh my_script.sh
+```
+
+## Программы для команадной строки
+
+В данном разделе мы опишем несколько базовых программ для командной строки, которые могут быть важны для работы. Для командной строки написано очень много разных программ. Важно понимать, что их все (естественно, после установки, если это необходимо) можно запустить, набрав в консоли название программы. Начнем наше знакомство с программы `ls`, которая перечисляет (list) содержание папок:
+
+```{{shell}}
+$ ls
+
+01_00_stemmers.png                  01_09_first_transducer.png
+01_01_light_switch.jpg              01_10_morphology.png
+01_02_light_switch_automaton.png    01_11_transducer_composition.png
+01_03_turnstile.jpg                 01_12_morphology2.png
+01_04_turnstile_automaton.png       03_01_Russita-feeding.png
+01_05_elephant.png                  03_02_Russita-bleeding.png
+01_06_elephant_short.png            03_03_Russita-counterfeeding.png
+01_07_multiple_words.png            03_04_Russita-counterbleeding.png
+01_08_multiple_words_optimized.png
+```
+
+У большинства программ есть некоторые однобуквенные аргументы (почему-то их принято называть флагами), которые перечисляют после минуса. Например флаг `-l` позволяет увидеть файлы в виде таблицы с некоторой дополнительной информацией про каждый файл.
+
+```{{shell}}
+$ ls -l
+
+total 2636
+-rw-rw-r-- 1 agricolamz agricolamz 122183 Jan  6 18:52 01_00_stemmers.png
+-rw-rw-r-- 1 agricolamz agricolamz 121071 Feb 18  2022 01_01_light_switch.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 156956 Jan  6 07:45 01_02_light_switch_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz  18075 Feb 18  2022 01_03_turnstile.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 167801 Jan  6 07:47 01_04_turnstile_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz 200090 Jan  6 07:50 01_05_elephant.png
+-rw-rw-r-- 1 agricolamz agricolamz 106598 Jan  6 07:51 01_06_elephant_short.png
+-rw-rw-r-- 1 agricolamz agricolamz 226555 Jan  6 07:52 01_07_multiple_words.png
+-rw-rw-r-- 1 agricolamz agricolamz 139834 Jan  6 07:58 01_08_multiple_words_optimized.png
+-rw-rw-r-- 1 agricolamz agricolamz 132286 Jan  6 16:02 01_09_first_transducer.png
+-rw-rw-r-- 1 agricolamz agricolamz 117095 Jan  6 17:15 01_10_morphology.png
+-rw-rw-r-- 1 agricolamz agricolamz 253314 Jan  6 18:32 01_11_transducer_composition.png
+-rw-rw-r-- 1 agricolamz agricolamz 261112 Jan 12 18:20 01_12_morphology2.png
+-rwxr-xr-x 1 agricolamz agricolamz 159091 Jan 13  2017 03_01_Russita-feeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 150034 Jan 13  2017 03_02_Russita-bleeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 140454 Jan 13  2017 03_03_Russita-counterfeeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 193216 Jan 13  2017 03_04_Russita-counterbleedin
+```
+
+Давайте использовать несколько флагов. Добавим флаг `-r` для обратной сортировки:
+
+```{{shell}}
+$ ls -l -r
+
+total 2636
+-rwxr-xr-x 1 agricolamz agricolamz 193216 Jan 13  2017 03_04_Russita-counterbleeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 140454 Jan 13  2017 03_03_Russita-counterfeeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 150034 Jan 13  2017 03_02_Russita-bleeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 159091 Jan 13  2017 03_01_Russita-feeding.png
+-rw-rw-r-- 1 agricolamz agricolamz 261112 Jan 12 18:20 01_12_morphology2.png
+-rw-rw-r-- 1 agricolamz agricolamz 253314 Jan  6 18:32 01_11_transducer_composition.png
+-rw-rw-r-- 1 agricolamz agricolamz 117095 Jan  6 17:15 01_10_morphology.png
+-rw-rw-r-- 1 agricolamz agricolamz 132286 Jan  6 16:02 01_09_first_transducer.png
+-rw-rw-r-- 1 agricolamz agricolamz 139834 Jan  6 07:58 01_08_multiple_words_optimized.png
+-rw-rw-r-- 1 agricolamz agricolamz 226555 Jan  6 07:52 01_07_multiple_words.png
+-rw-rw-r-- 1 agricolamz agricolamz 106598 Jan  6 07:51 01_06_elephant_short.png
+-rw-rw-r-- 1 agricolamz agricolamz 200090 Jan  6 07:50 01_05_elephant.png
+-rw-rw-r-- 1 agricolamz agricolamz 167801 Jan  6 07:47 01_04_turnstile_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz  18075 Feb 18  2022 01_03_turnstile.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 156956 Jan  6 07:45 01_02_light_switch_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz 121071 Feb 18  2022 01_01_light_switch.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 122183 Jan  6 18:52 01_00_stemmers.png
+```
+
+Все однобуквенные флаги можно соединять вместе:
+
+```{{shell}}
+$ ls -lr
+
+total 2636
+-rwxr-xr-x 1 agricolamz agricolamz 193216 Jan 13  2017 03_04_Russita-counterbleeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 140454 Jan 13  2017 03_03_Russita-counterfeeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 150034 Jan 13  2017 03_02_Russita-bleeding.png
+-rwxr-xr-x 1 agricolamz agricolamz 159091 Jan 13  2017 03_01_Russita-feeding.png
+-rw-rw-r-- 1 agricolamz agricolamz 261112 Jan 12 18:20 01_12_morphology2.png
+-rw-rw-r-- 1 agricolamz agricolamz 253314 Jan  6 18:32 01_11_transducer_composition.png
+-rw-rw-r-- 1 agricolamz agricolamz 117095 Jan  6 17:15 01_10_morphology.png
+-rw-rw-r-- 1 agricolamz agricolamz 132286 Jan  6 16:02 01_09_first_transducer.png
+-rw-rw-r-- 1 agricolamz agricolamz 139834 Jan  6 07:58 01_08_multiple_words_optimized.png
+-rw-rw-r-- 1 agricolamz agricolamz 226555 Jan  6 07:52 01_07_multiple_words.png
+-rw-rw-r-- 1 agricolamz agricolamz 106598 Jan  6 07:51 01_06_elephant_short.png
+-rw-rw-r-- 1 agricolamz agricolamz 200090 Jan  6 07:50 01_05_elephant.png
+-rw-rw-r-- 1 agricolamz agricolamz 167801 Jan  6 07:47 01_04_turnstile_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz  18075 Feb 18  2022 01_03_turnstile.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 156956 Jan  6 07:45 01_02_light_switch_automaton.png
+-rw-rw-r-- 1 agricolamz agricolamz 121071 Feb 18  2022 01_01_light_switch.jpg
+-rw-rw-r-- 1 agricolamz agricolamz 122183 Jan  6 18:52 01_00_stemmers.png
+```
+
+Кроме того, некоторые однобуквенные флаги имеют неоднобуквенный аналог. Все неоднобуквенные флаги начинаются с двух минусов. Например, флаг `-r` имеет неоднобуквенный аналог `--reverse`:
+
+```{{shell}}
+ls --reverse
+
+03_04_Russita-counterbleeding.png   01_07_multiple_words.png
+03_03_Russita-counterfeeding.png    01_06_elephant_short.png
+03_02_Russita-bleeding.png          01_05_elephant.png
+03_01_Russita-feeding.png           01_04_turnstile_automaton.png
+01_12_morphology2.png               01_03_turnstile.jpg
+01_11_transducer_composition.png    01_02_light_switch_automaton.png
+01_10_morphology.png                01_01_light_switch.jpg
+01_09_first_transducer.png          01_00_stemmers.png
+01_08_multiple_words_optimized.png
+```
+
+Достаточно ожидаемо неоднобуквенные флаги нельзя комбинировать так, как комбинируются однобуквенные:
+
+```{{shell}}
+$ ls --reversel
+
+ls: unrecognized option '--reversel'
+Try 'ls --help' for more information.
+```
+
+Отчёт об ошибке сообщает нам самое важное: где почитать документацию. В большинстве программ это можно сделать, вызвав аргумент `--help`. Иногда более вменяемый мануал дает команда `man`.
+
+```{{shell}}
+$ ls --help
+
+Usage: ls [OPTION]... [FILE]...
+List information about the FILEs (the current directory by default).
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -a, --all                  do not ignore entries starting with .
+  -A, --almost-all           do not list implied . and ..
+      --author               with -l, print the author of each file
+  -b, --escape               print C-style escapes for nongraphic characters
+      --block-size=SIZE      with -l, scale sizes by SIZE when printing them;
+                             e.g., '--block-size=M'; see SIZE format below
+
+  -B, --ignore-backups       do not list implied entries ending with ~
+  -c                         with -lt: sort by, and show, ctime (time of last
+                             change of file status information);
+                             with -l: show ctime and sort by name;
+                             otherwise: sort by ctime, newest first
+
+  -C                         list entries by columns
+      --color[=WHEN]         color the output WHEN; more info below
+  -d, --directory            list directories themselves, not their contents
+  -D, --dired                generate output designed for Emacs' dired mode
+  -f                         list all entries in directory order
+  -F, --classify[=WHEN]      append indicator (one of */=>@|) to entries WHEN
+      --file-type            likewise, except do not append '*'
+      --format=WORD          across -x, commas -m, horizontal -x, long -l,
+                             single-column -1, verbose -l, vertical -C
+
+      --full-time            like -l --time-style=full-iso
+  -g                         like -l, but do not list owner
+      --group-directories-first
+                             group directories before files;
+                             can be augmented with a --sort option, but any
+                             use of --sort=none (-U) disables grouping
+
+  -G, --no-group             in a long listing, don't print group names
+  -h, --human-readable       with -l and -s, print sizes like 1K 234M 2G etc.
+      --si                   likewise, but use powers of 1000 not 1024
+  -H, --dereference-command-line
+                             follow symbolic links listed on the command line
+      --dereference-command-line-symlink-to-dir
+                             follow each command line symbolic link
+                             that points to a directory
+
+      --hide=PATTERN         do not list implied entries matching shell PATTERN
+                             (overridden by -a or -A)
+
+      --hyperlink[=WHEN]     hyperlink file names WHEN
+      --indicator-style=WORD
+                             append indicator with style WORD to entry names:
+                             none (default), slash (-p),
+                             file-type (--file-type), classify (-F)
+
+  -i, --inode                print the index number of each file
+  -I, --ignore=PATTERN       do not list implied entries matching shell PATTERN
+  -k, --kibibytes            default to 1024-byte blocks for file system usage;
+                             used only with -s and per directory totals
+
+  -l                         use a long listing format
+  -L, --dereference          when showing file information for a symbolic
+                             link, show information for the file the link
+                             references rather than for the link itself
+
+  -m                         fill width with a comma separated list of entries
+  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs
+  -N, --literal              print entry names without quoting
+  -o                         like -l, but do not list group information
+  -p, --indicator-style=slash
+                             append / indicator to directories
+  -q, --hide-control-chars   print ? instead of nongraphic characters
+      --show-control-chars   show nongraphic characters as-is (the default,
+                             unless program is 'ls' and output is a terminal)
+
+  -Q, --quote-name           enclose entry names in double quotes
+      --quoting-style=WORD   use quoting style WORD for entry names:
+                             literal, locale, shell, shell-always,
+                             shell-escape, shell-escape-always, c, escape
+                             (overrides QUOTING_STYLE environment variable)
+
+  -r, --reverse              reverse order while sorting
+  -R, --recursive            list subdirectories recursively
+  -s, --size                 print the allocated size of each file, in blocks
+  -S                         sort by file size, largest first
+      --sort=WORD            sort by WORD instead of name: none (-U), size (-S),
+                             time (-t), version (-v), extension (-X), width
+
+      --time=WORD            select which timestamp used to display or sort;
+                               access time (-u): atime, access, use;
+                               metadata change time (-c): ctime, status;
+                               modified time (default): mtime, modification;
+                               birth time: birth, creation;
+                             with -l, WORD determines which time to show;
+                             with --sort=time, sort by WORD (newest first)
+
+      --time-style=TIME_STYLE
+                             time/date format with -l; see TIME_STYLE below
+  -t                         sort by time, newest first; see --time
+  -T, --tabsize=COLS         assume tab stops at each COLS instead of 8
+  -u                         with -lt: sort by, and show, access time;
+                             with -l: show access time and sort by name;
+                             otherwise: sort by access time, newest first
+
+  -U                         do not sort; list entries in directory order
+  -v                         natural sort of (version) numbers within text
+  -w, --width=COLS           set output width to COLS.  0 means no limit
+  -x                         list entries by lines instead of by columns
+  -X                         sort alphabetically by entry extension
+  -Z, --context              print any security context of each file
+      --zero                 end each output line with NUL, not newline
+  -1                         list one file per line
+      --help        display this help and exit
+      --version     output version information and exit
+
+The SIZE argument is an integer and optional unit (example: 10K is 10*1024).
+Units are K,M,G,T,P,E,Z,Y,R,Q (powers of 1024) or KB,MB,... (powers of 1000).
+Binary prefixes can be used, too: KiB=K, MiB=M, and so on.
+
+The TIME_STYLE argument can be full-iso, long-iso, iso, locale, or +FORMAT.
+FORMAT is interpreted like in date(1).  If FORMAT is FORMAT1<newline>FORMAT2,
+then FORMAT1 applies to non-recent files and FORMAT2 to recent files.
+TIME_STYLE prefixed with 'posix-' takes effect only outside the POSIX locale.
+Also the TIME_STYLE environment variable sets the default style to use.
+
+The WHEN argument defaults to 'always' and can also be 'auto' or 'never'.
+
+Using color to distinguish file types is disabled both by default and
+with --color=never.  With --color=auto, ls emits color codes only when
+standard output is connected to a terminal.  The LS_COLORS environment
+variable can change the settings.  Use the dircolors(1) command to set it.
+
+Exit status:
+ 0  if OK,
+ 1  if minor problems (e.g., cannot access subdirectory),
+ 2  if serious trouble (e.g., cannot access command-line argument).
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Full documentation <https://www.gnu.org/software/coreutils/ls>
+or available locally via: info '(coreutils) ls invocation'  
+```
+
+Некоторые аргументы функций принимают значения от пользователей, обычно их разделяют пробелом. Например, аргумент `--sort` принимает одно из следующих значений: `none`, `size`, `time`, `version`, `extension` или `width`:
+
+```{{shell}}
+$ ls --sort size
+
+01_12_morphology2.png              03_03_Russita-counterfeeding.png
+01_11_transducer_composition.png   01_08_multiple_words_optimized.png
+01_07_multiple_words.png           01_09_first_transducer.png
+01_05_elephant.png                 01_00_stemmers.png
+03_04_Russita-counterbleeding.png  01_01_light_switch.jpg
+01_04_turnstile_automaton.png      01_10_morphology.png
+03_01_Russita-feeding.png          01_06_elephant_short.png
+01_02_light_switch_automaton.png   01_03_turnstile.jpg
+03_02_Russita-bleeding.png            
+```
+
+Некоторые аргументы позволяют пользователям ввести что-то не из заранее заданного списка. Например, это важно при указании путей, имен файлов, интернет-ссылок и т. п.
+
+Следующая программа, с которой мы познакомимся --- `pwd` (print working directory). Это программа позволяет увидеть текущую папку.
+
+```{{shell}}
+$ pwd
+
+/home/agricolamz/work/materials/2025_morphological_transducers/images
+```
+
+Заодно мы увидели, что пути в юниксоподобных операционных системах пишут, используя слэш ("forward" slash).
+
+Для того чтобы перейти в какую-нибудь другую папку, используют команду `cd` (change directory).
+
+```{{shell}}
+$ pwd
+
+/home/agricolamz/work/materials/2025_morphological_transducers/images
+
+$ cd /home/agricolamz/Documents/CV
+$ pwd
+
+/home/agricolamz/Documents/CV
+```
+
+Стоит знать о возможности дать программе `cd` относительный путь:
+
+- `.` --- текущая папка;
+- `..` --- родительская папка
+- `some_name` --- имя папки в текущей папке
+- `-` --- предыдущая папка, в которой пользователь находился
+
+```{{shell}}
+$ pwd
+
+/home/agricolamz/Documents/CV
+
+$ cd -
+$ pwd
+
+/home/agricolamz/work/materials/2025_morphological_transducers/images
+
+$ cd ..
+$ pwd
+
+/home/agricolamz/work/materials/2025_morphological_transducers
+
+$ ls -d */
+data/  docs/  images/  task_tests/
+
+$ cd data
+$ pwd
+
+/home/agricolamz/work/materials/2025_morphological_transducers/data
+```
+
+Для создания файла традиционно используют программу `touch`, хотя это, видимо, не ее прямое предназначение (см. детали в `touch --help`):
+
+```{{shell}}
+$ ls
+
+04_kabardian_verb.csv
+
+$ touch new_file.txt
+$ ls
+
+04_kabardian_verb.csv  new_file.txt
+```
+
+Для того чтобы удалить файл, используется программа `rm`:
+
+```{{shell}}
+$ ls
+
+04_kabardian_verb.csv  new_file.txt
+
+$ rm new_file.txt
+$ ls
+
+04_kabardian_verb.csv
+```
+
+Для того чтобы создать папку, используют программу `mkdir`. Для того чтобы удалить --- программа `rm` с аргументом `r` (recursive).
+
+```{{shell}}
+$ ls
+
+04_kabardian_verb.csv
+
+$ mkdir some_stuff
+
+$ ls
+
+04_kabardian_verb.csv  some_stuff
+
+$ echo "hi there" > some_stuff/new_file.txt
+
+$ ls some_stuff
+
+new_file.txt
+
+$ rm -r some_stuff
+$ ls
+
+04_kabardian_verb.csv
+```
+
+Рассмотрим теперь несколько команд для работы с текстами. Любой текстовый файл можно прочитать при помощи команды `cat`:
+
+```{{shell}}
+$ cat 04_kabardian_verb.csv
+
+translation,surface,abs,dir,io,ben/mal/com,dyn,root,pst/pot,dcl
+я иду,сокIуэ,сы,,,,о,кIуэ,,
+я шел,сыкIуащ,сы,,,,,кIуэ,а,щ
+я пойду,сыкIуэнщ,сы,,,,,кIуэ,н,щ
+я иду сюда,сыкъокIуэ,сы,къэ,,,о,кIуэ,,
+я шел сюда,сыкъэкIуащ,сы,къэ,,,,кIуэ,а,щ
+я пойду сюда,сыкъэкIуэнщ,сы,къэ,,,,кIуэ,н,щ
+ты идешь,уокIуэ,у,,,,о,кIуэ,,
+ты шел,укIуащ,у,,,,,кIуэ,а,щ
+ты пойдешь,укIуэнщ,у,,,,,кIуэ,н,щ
+ты идешь сюда,укъокIуэ,у,къэ,,,о,кIуэ,,
+ты шел сюда,укъэкIуащ,у,къэ,,,,кIуэ,а,щ
+ты пойдешь сюда,укъэкIуэнщ,у,къэ,,,,кIуэ,н,щ
+мы идем,докIуэ,ды,,,,о,кIуэ,,
+мы шли,дыкIуащ,ды,,,,,кIуэ,а,щ
+мы пойдем,дыкIуэнщ,ды,,,,,кIуэ,н,щ
+мы идем сюда,дыкъокIуэ,ды,къэ,,,о,кIуэ,,
+мы шли сюда,дыкъэкIуащ,ды,къэ,,,,кIуэ,а,щ
+мы пойдем сюда,дыкъэкIуэнщ,ды,къэ,,,,кIуэ,н,щ
+вы идете,фокIуэ,фы,,,,о,кIуэ,,
+вы шли,фыкIуащ,фы,,,,,кIуэ,а,щ
+вы пойдете,фыкIуэнщ,фы,,,,,кIуэ,н,щ
+вы идете сюда,фыкъокIуэ,фы,къэ,,,о,кIуэ,,
+вы шли сюда,фыкъэкIуащ,фы,къэ,,,,кIуэ,а,щ
+вы пойдете сюда,фыкъэкIуэнщ,фы,къэ,,,,кIуэ,н,щ
+я для тебя иду,сыпхуокIуэ,сы,,п,хуэ,о,кIуэ,,
+я для тебя ходил,сыпхуэкIуащ,сы,,п,хуэ,,кIуэ,а,щ
+я для тебя пойду,сыпхуэкIуэнщ,сы,,п,хуэ,,кIуэ,н,щ
+я против твоей воли иду,сыпфIокIуэ,сы,,п,фIэ,о,кIуэ,,
+я против твоей воли ходил,сыпфIыкIуащ,сы,,п,фIэ,,кIуэ,а,щ
+я против твоей воли пойду,сыпфIыкIуэнщ,сы,,п,фIэ,,кIуэ,н,щ
+я с тобой иду,сыбдокIуэ,сы,,п,дэ,о,кIуэ,,
+я с тобой ходил,сыбдэкIуащ,сы,,п,дэ,,кIуэ,а,щ
+я с тобой пойду,сыбдэкIуэнщ,сы,,п,дэ,,кIуэ,н,щ
+я с вами иду,сывдокIуэ,сы,,ф,дэ,о,кIуэ,,
+я с вами ходил,сывдэкIуащ,сы,,ф,дэ,,кIуэ,а,щ
+я с вами пойду,сывдэкIуэнщ,сы,,ф,дэ,,кIуэ,н,щ
+ты со мной идешь,уздокIуэ,у,,с,дэ,о,кIуэ,,
+ты со мной ходил,уздэкIуащ,у,,с,дэ,,кIуэ,а,щ
+ты со мной пойдешь,уздэкIуэнщ,у,,с,дэ,,кIуэ,н,щ
+ты с нами идешь,уддокIуэ,у,,т,дэ,о,кIуэ,,
+ты с нами ходил,уддэкIуащ,у,,т,дэ,,кIуэ,а,щ
+ты с нами пойдешь,уддэкIуэнщ,у,,т,дэ,,кIуэ,н,щ
+я для вас иду,сыфхуокIуэ,сы,,ф,хуэ,о,кIуэ,,
+я для вас ходил,сыфхуэкIуащ,сы,,ф,хуэ,,кIуэ,а,щ
+я для вас пойду,сыфхуэкIуэнщ,сы,,ф,хуэ,,кIуэ,н,щ
+я против вашей воли иду,сыффIокIуэ,сы,,ф,фIэ,о,кIуэ,,
+я против вашей воли ходил,сыффIэкIуащ,сы,,ф,фIэ,,кIуэ,а,щ
+я против вашей воли пойду,сыффIэкIуэнщ,сы,,ф,фIэ,,кIуэ,н,щ
+ты для меня идешь,усхуокIуэ,у,,с,хуэ,о,кIуэ,,
+ты против моей воли идешь,усфIокIуэ,у,,с,фIэ,о,кIуэ,,
+ты для нас идешь,утхуокIуэ,у,,т,хуэ,о,кIуэ,,
+ты против нашей воли идешь,утфIокIуэ,у,,т,фIэ,о,кIуэ,,
+```
+
+Не очень приятно выглядит... Но это связано с тем, что это `.csv` файл, для его чтения и отображения следует использовать другие инструменты, например, команду `column`:
+
+```{{shell}}
+$ column -s, -t 04_kabardian_verb.csv
+
+translation                 surface       abs  dir  io  ben/mal/com  dyn  root  pst/pot  dcl
+я иду                       сокIуэ        сы                         о    кIуэ           
+я шел                       сыкIуащ       сы                              кIуэ  а        щ
+я пойду                     сыкIуэнщ      сы                              кIуэ  н        щ
+я иду сюда                  сыкъокIуэ     сы   къэ                   о    кIуэ           
+я шел сюда                  сыкъэкIуащ    сы   къэ                        кIуэ  а        щ
+я пойду сюда                сыкъэкIуэнщ   сы   къэ                        кIуэ  н        щ
+ты идешь                    уокIуэ        у                          о    кIуэ           
+ты шел                      укIуащ        у                               кIуэ  а        щ
+ты пойдешь                  укIуэнщ       у                               кIуэ  н        щ
+ты идешь сюда               укъокIуэ      у    къэ                   о    кIуэ           
+ты шел сюда                 укъэкIуащ     у    къэ                        кIуэ  а        щ
+ты пойдешь сюда             укъэкIуэнщ    у    къэ                        кIуэ  н        щ
+мы идем                     докIуэ        ды                         о    кIуэ           
+мы шли                      дыкIуащ       ды                              кIуэ  а        щ
+мы пойдем                   дыкIуэнщ      ды                              кIуэ  н        щ
+мы идем сюда                дыкъокIуэ     ды   къэ                   о    кIуэ           
+мы шли сюда                 дыкъэкIуащ    ды   къэ                        кIуэ  а        щ
+мы пойдем сюда              дыкъэкIуэнщ   ды   къэ                        кIуэ  н        щ
+вы идете                    фокIуэ        фы                         о    кIуэ           
+вы шли                      фыкIуащ       фы                              кIуэ  а        щ
+вы пойдете                  фыкIуэнщ      фы                              кIуэ  н        щ
+вы идете сюда               фыкъокIуэ     фы   къэ                   о    кIуэ           
+вы шли сюда                 фыкъэкIуащ    фы   къэ                        кIуэ  а        щ
+вы пойдете сюда             фыкъэкIуэнщ   фы   къэ                        кIуэ  н        щ
+я для тебя иду              сыпхуокIуэ    сы        п   хуэ          о    кIуэ           
+я для тебя ходил            сыпхуэкIуащ   сы        п   хуэ               кIуэ  а        щ
+я для тебя пойду            сыпхуэкIуэнщ  сы        п   хуэ               кIуэ  н        щ
+я против твоей воли иду     сыпфIокIуэ    сы        п   фIэ          о    кIуэ           
+я против твоей воли ходил   сыпфIыкIуащ   сы        п   фIэ               кIуэ  а        щ
+я против твоей воли пойду   сыпфIыкIуэнщ  сы        п   фIэ               кIуэ  н        щ
+я с тобой иду               сыбдокIуэ     сы        п   дэ           о    кIуэ           
+я с тобой ходил             сыбдэкIуащ    сы        п   дэ                кIуэ  а        щ
+я с тобой пойду             сыбдэкIуэнщ   сы        п   дэ                кIуэ  н        щ
+я с вами иду                сывдокIуэ     сы        ф   дэ           о    кIуэ           
+я с вами ходил              сывдэкIуащ    сы        ф   дэ                кIуэ  а        щ
+я с вами пойду              сывдэкIуэнщ   сы        ф   дэ                кIуэ  н        щ
+ты со мной идешь            уздокIуэ      у         с   дэ           о    кIуэ           
+ты со мной ходил            уздэкIуащ     у         с   дэ                кIуэ  а        щ
+ты со мной пойдешь          уздэкIуэнщ    у         с   дэ                кIуэ  н        щ
+ты с нами идешь             уддокIуэ      у         т   дэ           о    кIуэ           
+ты с нами ходил             уддэкIуащ     у         т   дэ                кIуэ  а        щ
+ты с нами пойдешь           уддэкIуэнщ    у         т   дэ                кIуэ  н        щ
+я для вас иду               сыфхуокIуэ    сы        ф   хуэ          о    кIуэ           
+я для вас ходил             сыфхуэкIуащ   сы        ф   хуэ               кIуэ  а        щ
+я для вас пойду             сыфхуэкIуэнщ  сы        ф   хуэ               кIуэ  н        щ
+я против вашей воли иду     сыффIокIуэ    сы        ф   фIэ          о    кIуэ           
+я против вашей воли ходил   сыффIэкIуащ   сы        ф   фIэ               кIуэ  а        щ
+я против вашей воли пойду   сыффIэкIуэнщ  сы        ф   фIэ               кIуэ  н        щ
+ты для меня идешь           усхуокIуэ     у         с   хуэ          о    кIуэ           
+ты против моей воли идешь   усфIокIуэ     у         с   фIэ          о    кIуэ           
+ты для нас идешь            утхуокIуэ     у         т   хуэ          о    кIуэ           
+ты против нашей воли идешь  утфIокIуэ     у         т   фIэ          о    кIуэ                
+```
+
+Достаточно популярные базовые программы для работы с текстовыми данными это `wc` и `grep`. Программа `wc` выводит подсчет относительно файла: строчек, слов и байт.
+
+```{{shell}}
+$ wc 04_kabardian_verb.csv
+
+53  181 3796 04_kabardian_verb.csv
+```
+
+При помощи аргументов можно выбрать, что выводить:
+
+```{{shell}}
+$ wc -l 04_kabardian_verb.csv
+
+53 04_kabardian_verb.csv
+
+$ wc -lw 04_kabardian_verb.csv
+
+53 181 04_kabardian_verb.csv
+
+$ wc -m 04_kabardian_verb.csv
+
+2314 04_kabardian_verb.csv
+```
+
+Файлов может быть несколько:
+
+```{{shell}}
+$ echo "hi there\n and good bye" > new_file.txt
+$ wc 04_kabardian_verb.csv new_file.txt
+
+  53  181 3796 04_kabardian_verb.csv
+   2    5   24 new_file.txt
+  55  186 3820 total
+
+$ rm new_file.txt
+```
+
+Команда `grep` ищет некоторое выражение в текстовых файлах и является достаточно мощным инструментом.
+
+```{{shell}}
+grep иду 04_kabardian_verb.csv
+
+я иду,сокIуэ,сы,,,,о,кIуэ,,
+я иду сюда,сыкъокIуэ,сы,къэ,,,о,кIуэ,,
+я для тебя иду,сыпхуокIуэ,сы,,п,хуэ,о,кIуэ,,
+я против твоей воли иду,сыпфIокIуэ,сы,,п,фIэ,о,кIуэ,,
+я с тобой иду,сыбдокIуэ,сы,,п,дэ,о,кIуэ,,
+я с вами иду,сывдокIуэ,сы,,ф,дэ,о,кIуэ,,
+я для вас иду,сыфхуокIуэ,сы,,ф,хуэ,о,кIуэ,,
+я против вашей воли иду,сыффIокIуэ,сы,,ф,фIэ,о,кIуэ,,
+
+grep -E "иду|идет" 04_kabardian_verb.csv
+
+я иду,сокIуэ,сы,,,,о,кIуэ,,
+я иду сюда,сыкъокIуэ,сы,къэ,,,о,кIуэ,,
+вы идете,фокIуэ,фы,,,,о,кIуэ,,
+вы идете сюда,фыкъокIуэ,фы,къэ,,,о,кIуэ,,
+я для тебя иду,сыпхуокIуэ,сы,,п,хуэ,о,кIуэ,,
+я против твоей воли иду,сыпфIокIуэ,сы,,п,фIэ,о,кIуэ,,
+я с тобой иду,сыбдокIуэ,сы,,п,дэ,о,кIуэ,,
+я с вами иду,сывдокIуэ,сы,,ф,дэ,о,кIуэ,,
+я для вас иду,сыфхуокIуэ,сы,,ф,хуэ,о,кIуэ,,
+я против вашей воли иду,сыффIокIуэ,сы,,ф,фIэ,о,кIуэ,,
+```
+
+Последнее, что следует обсудить в данном разделе --- оператор `|`. Этот оператор позволяет отправить результат работы одной функции в другую, например:
+
+```{{shell}}
+$ cat 04_kabardian_verb.csv | wc -l
+
+53
+```
+
+В данном случае программа `wc` приняла результат работы `cat`. Это полезный инструмент, если хочется запустить несколько программ, не делая промежуточных переменных. Вот еще один пример:
+
+```{{shell}}
+$ ls ../images | sort -r
+
+03_04_Russita-counterbleeding.png
+03_03_Russita-counterfeeding.png
+03_02_Russita-bleeding.png
+03_01_Russita-feeding.png
+01_12_morphology2.png
+01_11_transducer_composition.png
+01_10_morphology.png
+01_09_first_transducer.png
+01_08_multiple_words_optimized.png
+01_07_multiple_words.png
+01_06_elephant_short.png
+01_05_elephant.png
+01_04_turnstile_automaton.png
+01_03_turnstile.jpg
+01_02_light_switch_automaton.png
+01_01_light_switch.jpg
+01_00_stemmers.png
+```
+
+Не вдаваясь в подробности, стоит оговориться, что если мы хотим записать результат работы функции в файл, то для этого используется другой оператор: `>`. Мы видели выше его использование:
+
+```{{shell}}
+$ echo "hi there" > new_file.txt
+```
+
+## Компиляция трансдьюсеров
+
+Теперь попробуем шаг за шагом скомпилировать наш морфологический трансдьюсер, используя программы `lexd` и `hfst`. Первым делом нужно установить необходимые программы `hfst`, `lexd`:
+
+```{{shell}}
+$ curl -s https://apertium.projectjj.com/apt/install-nightly.sh | sudo bash
+$ sudo apt-get install hfst lexd
+```
+
+Создадим файлы `example.lexd` и `example.twol`:
+
+```{{lexd}}
+PATTERNS
+Noun (Suffix[-adj] | (Suffix[adj] Inflection))?
+
+LEXICON Noun
+ночь
+печь
+
+LEXICON Suffix
+<dim>:ка
+<adj>:н[adj]
+
+LEXICON Inflection
+<m><sg><nom>:ой
+```
+
+```{{twol}}
+Alphabet
+  а е й к н о п ч ь ь:0;
+
+Rules
+
+"чк чн пишется без ь"
+! например, ночьной -> ночной или печька -> печка
+
+ь:0 <=> _ к;
+        _ н;
+```
+
+Скомпилируем `.lexd` файл:
+
+```{{shell}}
+$ lexd example.lexd
+
+0	1	н	н	0.000000	
+0	2	п	п	0.000000	
+1	3	о	о	0.000000	
+2	3	е	е	0.000000	
+3	4	ч	ч	0.000000	
+4	5	ь	ь	0.000000	
+5	6	<dim>	к	0.000000	
+5	7	<adj>	н	0.000000	
+6	8	@0@	а	0.000000	
+7	9	<m>	о	0.000000	
+9	10	<sg>	й	0.000000	
+10	8	<nom>	@0@	0.000000	
+5	0.000000
+8	0.000000 
+```
+
+Мы видим, что программа `lexd` преобразовала наш файл `example.lexd` в трансдьюсер в ATT формате (см. @sec-automata). Так как основной формат все равно завязан на программу `hfst`, можно перенаправить ATT в команду `hfst-txt2fst`. Флаг `-o` отвечает за имя файла, куда записать результат, так что пользователь может задать любое свое имя, отличное от `lexd.hfst`.
+
+```{{shell}}
+$ lexd example.lexd | hfst-txt2fst -o lexd.hfst
+```
+
+В результате был получен бинарный файл `.hfst`, который используется для дальнейшей работы. Например, можно использовать функцию `hfst-lookup` для того, чтобы обратиться к трансдьюсеру.
+
+```{{shell}}
+$ echo "ночь" | hfst-lookup lexd.hfst 
+
+hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+Using HFST basic transducer format and performing slow lookups
+> ночь	ночь	0,000000
+
+$ echo "ночька" | hfst-lookup lexd.hfst
+
+hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
+Using HFST basic transducer format and performing slow lookups
+> ночька	ночька+?	inf
+```
+
+Можно использовать программу `hfst-fst2strings`, чтобы посмотреть на все формы: 
+
+```{{shell}}
+$ hfst-fst2strings lexd.hfst
+
+ночь
+ночь<dim>:ночька
+ночь<adj><m><sg><nom>:ночьной
+печь
+печь<dim>:печька
+печь<adj><m><sg><nom>:печьной
+```
+
+Теперь можно скомпилировать `.twol` часть:
+
+```{{shell}}
+$ hfst-twolc example.twol -o twol.hfst
+
+Reading input from task.twol.
+Writing output to twol.hfst.
+Reading alphabet.
+Reading rules and compiling their contexts and centers.
+Compiling rules.
+Storing rules.
+```
+
+Все это достаточно скучные сообщения, поэтому можно использовать аргумент `-q` (quiet), чтобы их не было.
+
+```{{shell}}
+$ hfst-twolc -q example.twol -o twol.hfst
+```
+
+Может быть вам захотелось бы посмотреть на `twol.hfst`, но ...
+
+```{{shell}}
+$ hfst-fst2strings twol.hfst
+
+hfst-fst2strings: Error: Transducer is cyclic. Use one or more of these options: -n, -N, -r, -l, -L, -c
+```
+
+Давайте воспользуемся аргументом `-n`:
+
+```{{shell}}
+$ hfst-fst2strings -n 10 twol.hfst
+
+ь
+ььк:ьк
+ьькь:ькь
+ьькььк:ькьк
+ьькьькь:ькькь
+ьькьькььк:ькькьк
+ьькьькьькь:ькькькь
+ьькьькьькььк:ькькькьк
+ьькьькьькьькь:ькькькькь
+ьькьькьькьькььк:ькькькькьк
+
+$ hfst-fst2strings -r 10 twol.hfst
+
+@_IDENTITY_SYMBOL_@@#@@#@:@_IDENTITY_SYMBOL_@
+а
+е
+к
+н
+нк
+о
+оье
+п
+ь@_IDENTITY_SYMBOL_@й 
+```
+
+Я считаю, что из преведенных фрагментов достаточно сложно что-то понять. Но попробуем пересечь наши трансдьюсеры:
+
+```{{shell}}
+$ hfst-compose-intersect lexd.hfst twol.hfst -o result.hfst
+```
+
+Теперь мы можем посмотреть, что же у нас получилось:
+
+```{{shell}}
+$ hfst-fst2strings result.hfst    
+
+ночь<dim>:ночка
+ночь<adj><m><sg><nom>:ночной
+ночь
+печь<dim>:печка
+печь<adj><m><sg><nom>:печной
+печь
+```
+
+Все! Мы сумели скомпелировать трансдьюсер, не используя [`Makefile`](https://raw.githubusercontent.com/agricolamz/2025_morphological_transducers/refs/heads/main/task_tests/Makefile), которым мы пользовались все это время.

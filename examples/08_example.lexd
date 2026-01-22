@@ -1,0 +1,29 @@
+PATTERNS
+Pronouns [<PRON><nom>:]
+(NounStem [<N>:] NounInflection)[^[m,f]]
+Rest
+
+LEXICON Pronouns
+я
+ты
+мы
+вы
+
+LEXICON NounStem
+глагол[m]
+класс[m]
+рассказ[m]
+россия:росси[f]
+
+LEXICON NounInflection
+<nom><sg>:[m]
+<acc><sg>:[m]
+<nom><sg>:я[f]
+<acc><sg>:ю[f]
+<gen><sg>:и[f]
+
+LEXICON Rest
+уныло<ADV>:уныло
+а<CONJ>:а
+о<PREP>:о
+

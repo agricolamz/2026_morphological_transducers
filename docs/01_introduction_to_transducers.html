@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; Автоматический морфологический анализ – Конечные автоматы в морфологическом анализе 2025/2026</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./02_introduction_to_lexd.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-320ad5607646c56df2c4e55503b78b49.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Поиск не дал результатов",
+    "search-matching-documents-text": "Результаты поиска",
+    "search-copy-link-title": "Скопировать ссылку",
+    "search-hide-matches-text": "Скрыть дополнительные результаты",
+    "search-more-match-text": "дополнительный результат в этом документе",
+    "search-more-matches-text": "дополнительных результата(-ов) в этом документе",
+    "search-clear-button-title": "Очистить",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Отменить",
+    "search-submit-button-title": "Найти",
+    "search-label": "Поиск"
+  }
+}</script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Переключить боковую панель навигации" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01_introduction_to_transducers.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Автоматический морфологический анализ</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Переключить боковую панель навигации" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Поиск" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Конечные автоматы в морфологическом анализе 2025/2026</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/agricolamz/2026_morphological_transducers/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Поиск"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Введение</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_introduction_to_transducers.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Автоматический морфологический анализ</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_introduction_to_lexd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Введение в <code>lexd</code>: морфология</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_phonological_rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Введение в <code>twol</code>: (мор)фонология</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04_language_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Моделирование языковых явлений</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05_technical_class.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Введение в командную строку</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06_transducer_manipulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Операции с трансдьюсерами</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07_disambiguation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Введение в <code>cg3</code>: разрешение морфологической неоднозначности</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08_coverage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Метрики качества</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09_hygiene.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Как распространять работу?</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Список литературы</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Содержание</h2>
+   
+  <ul>
+  <li><a href="#приведение-к-основе-stemming" id="toc-приведение-к-основе-stemming" class="nav-link active" data-scroll-target="#приведение-к-основе-stemming"><span class="header-section-number">1.1</span> Приведение к основе (stemming)</a></li>
+  <li><a href="#много-данных" id="toc-много-данных" class="nav-link" data-scroll-target="#много-данных"><span class="header-section-number">1.2</span> Много данных</a></li>
+  <li><a href="#другие-правиловые-подходы" id="toc-другие-правиловые-подходы" class="nav-link" data-scroll-target="#другие-правиловые-подходы"><span class="header-section-number">1.3</span> Другие правиловые подходы</a></li>
+  <li><a href="#от-автоматов-к-морфологическим-трансдьюсерам" id="toc-от-автоматов-к-морфологическим-трансдьюсерам" class="nav-link" data-scroll-target="#от-автоматов-к-морфологическим-трансдьюсерам"><span class="header-section-number">1.4</span> От автоматов к морфологическим трансдьюсерам</a>
+  <ul class="collapse">
+  <li><a href="#sec-automata" id="toc-sec-automata" class="nav-link" data-scroll-target="#sec-automata"><span class="header-section-number">1.4.1</span> Конечные автоматы</a></li>
+  <li><a href="#sec-transducers" id="toc-sec-transducers" class="nav-link" data-scroll-target="#sec-transducers"><span class="header-section-number">1.4.2</span> Трансдьюсеры</a></li>
+  </ul></li>
+  <li><a href="#проблемы-моделирования-морфологии-языка" id="toc-проблемы-моделирования-морфологии-языка" class="nav-link" data-scroll-target="#проблемы-моделирования-морфологии-языка"><span class="header-section-number">1.5</span> Проблемы моделирования морфологии языка</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Автоматический морфологический анализ</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Морфологический анализ, как его обычно видят лингвисты, обычно включает в себя несколько вещей:</p>
+<ul>
+<li>определение морфологической формы (например, латинское <em>mensam</em> — <span class="smallcaps">acc.sg</span>);</li>
+<li>приведение к начальной форме или основе (<em>mensam</em> — <em>mensa</em>, ж. р., первое склонение);</li>
+<li>перевод основы (<em>mensam</em> — ‘стол’).</li>
+</ul>
+<p>В зависимости от целей люди делают акцент на разные аспекты морфологического анализа. Для многих NLP задач полезным является приведение к начальной форме, лингвистический корпусной анализ практически невозможен без заранее определенных морфологических форм, и все три необходимы для представления языкового материала в научной работе. Также стоит помнить, что для разных задач могут быть важны разные категории, например, лингвисты, когда приводят примеры, редко перечисляют несловоизменительную информацию (например, род для существительных), которая может быть важна в каких-то задачах.</p>
+<section id="приведение-к-основе-stemming" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="приведение-к-основе-stemming"><span class="header-section-number">1.1</span> Приведение к основе (stemming)</h2>
+<p>Достаточно широкое применение в ранюю эпоху NLP получили методы, которые позволяют привести словоформы к основе или квазиоснове. Эта процедура помогала уменьшить разнообразие форм в тексте, что облегчало поиск и извлечение информации. В работе <span class="citation" data-cites="singh17">(<a href="references.html#ref-singh17" role="doc-biblioref">Singh и Gupta 2017</a>)</span> приводится целая классификация стемеров:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_00_stemmers.png" class="img-fluid figure-img" width="815"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="много-данных" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="много-данных"><span class="header-section-number">1.2</span> Много данных</h2>
+<p>Обычно, если много данных, люди используют нейросети. Для морфологического анализа русского языка их использовали в следующих работах <span class="citation" data-cites="arefyev18 sorokin18 bolshakova19a bolshakova19b bolshakova20 garipov23">(<a href="references.html#ref-arefyev18" role="doc-biblioref">Arefyev, Gratsianova, и Popov 2018</a>; <a href="references.html#ref-sorokin18" role="doc-biblioref">Sorokin и Kravtsova 2018</a>; <a href="references.html#ref-bolshakova19a" role="doc-biblioref">Bolshakova и Sapin 2019a</a>, <a href="references.html#ref-bolshakova19b" role="doc-biblioref">2019b</a>, <a href="references.html#ref-bolshakova20" role="doc-biblioref">2020</a>; <a href="references.html#ref-garipov23" role="doc-biblioref">Garipov, Morozov, и Glazkova 2023</a>)</span>. Используются разные архитектуры:</p>
+<ul>
+<li>cвёрточные нейронные сеть (convolutional neural network, CNN);</li>
+<li>деревья решения с градиентным бустингом (decision trees with gradient boosting);</li>
+<li>двунаправленная длинная цепь элементов краткосрочной памяти (Biderectional long short-term memory network, Bi-LSTM);</li>
+<li>и другие.</li>
+</ul>
+<p>Другой важный проект, который можно упомянуть в этом разделе: <a href="https://ufal.mff.cuni.cz/udpipe/2">UDPipe</a> — проект, основанный на размеченных в формате <a href="https://universaldependencies.org/">Universal Dependencies трибанках</a> большого количества языков <span class="citation" data-cites="straka18">(<a href="references.html#ref-straka18" role="doc-biblioref">Straka 2018</a>)</span>. Отметим, что их задача амбициознее: они строят модель, совмещающую морфологический парсер и синтаксический парсер дерева зависимостей. Внутри: длинная цепь элементов краткосрочной памяти (LSTM), которая работает на основе векторного представления слов.</p>
+<p>Также стоит упомянуть проект <a href="http://morpho.aalto.fi/projects/morpho/">Morfessor</a>, в котором используют скрытые марковские цепи (HMM) <span class="citation" data-cites="gronroos14">(<a href="references.html#ref-gronroos14" role="doc-biblioref">Grönroos и др. 2014</a>)</span>.</p>
+</section>
+<section id="другие-правиловые-подходы" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="другие-правиловые-подходы"><span class="header-section-number">1.3</span> Другие правиловые подходы</h2>
+<p>Стоит отметить, что существуют не основанные на трансдьюсерах правиловые подходы, например,</p>
+<ul>
+<li>проект <code>uniparser-morph</code> Тимофея Архангельского <span class="citation" data-cites="arkhangelskiy12">(<a href="references.html#ref-arkhangelskiy12" role="doc-biblioref">Архангельский 2012</a>)</span>;</li>
+<li>нечто, что работает в SIL Fieldworks;</li>
+<li>множество узконаправленных парсеров, написанных для конкертных языков.</li>
+</ul>
+</section>
+<section id="от-автоматов-к-морфологическим-трансдьюсерам" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="от-автоматов-к-морфологическим-трансдьюсерам"><span class="header-section-number">1.4</span> От автоматов к морфологическим трансдьюсерам</h2>
+<section id="sec-automata" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="sec-automata"><span class="header-section-number">1.4.1</span> Конечные автоматы</h3>
+<p>Теория автоматов — это дисциплина на стыке математики и компьютерных наук, которая появилась в XX веке. Первые конечных автоматов были предложены в работах <span class="citation" data-cites="mealy55 moore56">(<a href="references.html#ref-mealy55" role="doc-biblioref">Mealy 1955</a>; <a href="references.html#ref-moore56" role="doc-biblioref">Moore 1956</a>)</span>. Данный раздел основан на первой главе из <span class="citation" data-cites="beesley03">(<a href="references.html#ref-beesley03" role="doc-biblioref">Beesley и Karttunen 2003</a>: 1–42)</span>.</p>
+<p>Под автоматами мы понимаем абстрактные машины, которые принимают разные состояния, а изменение состояний вызывается некоторым действием:</p>
+<div class="cell quarto-layout-panel" data-layout="[[1,4],[1,4]]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 20.0%;justify-content: center;">
+<p><img src="images/01_01_light_switch.jpg" class="img-fluid" width="400"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 80.0%;justify-content: center;">
+<p><img src="images/01_02_light_switch_automaton.png" class="img-fluid" width="1537"></p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 20.0%;justify-content: center;">
+<p><img src="images/01_03_turnstile.jpg" class="img-fluid" width="306"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 80.0%;justify-content: center;">
+<p><img src="images/01_04_turnstile_automaton.png" class="img-fluid" width="1527"></p>
+</div>
+</div>
+</div>
+<p>Мы не будем давать формального определения конечных автоматов, а перечислим его составляющие:</p>
+<ul>
+<li>алфавит, который автомат понимает;</li>
+<li>конечное количество состояний;</li>
+<li>переходы между состояниями;</li>
+<li>одно начальное состояние (часто обозначют нулем);</li>
+<li>набор конечных состояний (часто обозначают двойным кружочком).</li>
+</ul>
+<p>Конечные автоматы можно использовать для побуквенной верефикации поданных на вход слов:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_05_elephant.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Если программа смогла пройти путь до конечного состояния (обозначен двойным кружочком), значит операция завершилась успехом, в остальных случаях — неудачей. Обычно путь, ведущий к неудаче, не отображают.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_06_elephant_short.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Можно сделать так, чтобы автомат верефицировал несколько слов:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_07_multiple_words.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Полученный автомат можно оптимизировать, так, чтобы там было меньше узлов, а задачи он решал те же самые:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_08_multiple_words_optimized.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Различают детерминированные и недетерминированные конечные автоматы. Последние отличаются от первых тем, что не выполняют одно из следующих требований:</p>
+<ul>
+<li>любой переход единственным образом определяется по текущему состоянию и входному символу;</li>
+<li>чтение входного символа требуется для каждого изменения состояния.</li>
+</ul>
+<p>Существуют математические работы, доказывающие, что для любого регулярного языка существует детерминированный конечный автомат <strong>с наименьшим</strong> возможным числом состояний. Такой автомат единственен с точностью до изоморфизма. Нам это важно как знание, что наши лингвистические автоматы можно оптимизировать.</p>
+<p>Важно отметить, что в данном разделе наши автоматы были представлены диаграммами состояний, однако автомат можно представить и в виде таблицы переходов, в которой каждая строка соотвествует одному состоянию, а столбцу допустимый входной символ (и выходной, если речь о трансдьюсерах, см. ниже). Данный формат еще называют ATT. Дополнительный столбец может соответсвовать столбцу весов.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>исходное состояние</th>
+<th>следующее состояние</th>
+<th>входной символ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>1</td>
+<td>с</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>2</td>
+<td>л</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>3</td>
+<td>о</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>4</td>
+<td>н</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>5</td>
+<td>у</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>1</td>
+<td>к</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>6</td>
+<td>к</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>1</td>
+<td>у</td>
+</tr>
+</tbody>
+</table>
+<p>То же самое, записанное в формате БНФ (Бэкусовская нормальная форма или Бэкуса-Науэра форма):</p>
+<pre><code>0::с1|у5|к6
+1::л2
+2::о3
+3::н4  
+5::к1
+6::у1</code></pre>
+</section>
+<section id="sec-transducers" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="sec-transducers"><span class="header-section-number">1.4.2</span> Трансдьюсеры</h3>
+<p>Всё, что мы рассмотрели до этого момента, позволяло лишь принимать/отвергать слова, поданные на вход. Если мы немного усложним автомат, добавив в него еще выходной алфавит, то мы получим трансдьюсер (в <a href="https://ru.wikipedia.org/wiki/Конечный_автомат_с_выходом">русской википедии</a> они названы конечными автоматами с выходом). Мы будем использовать обновленную нотацию: то, что представлено на вход, мы пишем слева от двоеточия, а то, что получается на выходе — справа.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_09_first_transducer.png" class="img-fluid figure-img" width="1919"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>В добавку к проверке наших слов, которое обеспечивалось конечными автоматами, мы получаем нечто на выходе. Пока в нашем примере на выходе получается то же самое, что на входе. Пустую строку принято обозначать греческой буквой эпсилон: <code>ε</code>. Таким образом мы можем представить трансдьюсер, который, наконец-то, делает некоторый морфологический анализ.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_10_morphology.png" class="img-fluid figure-img" width="1917"></p>
+</figure>
+</div>
+</div>
+</div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>вход</th>
+<th>выход</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>слон</em></td>
+<td><em>слон</em>&lt;n&gt;&lt;nom&gt;&lt;sg&gt;</td>
+</tr>
+<tr class="even">
+<td><em>слоном</em></td>
+<td><em>слон</em>&lt;n&gt;&lt;ins&gt;&lt;sg&gt;</td>
+</tr>
+<tr class="odd">
+<td><em>уклон</em></td>
+<td><em>уклон</em>&lt;n&gt;&lt;nom&gt;&lt;sg&gt;</td>
+</tr>
+<tr class="even">
+<td><em>уклоном</em></td>
+<td><em>уклон</em>&lt;n&gt;&lt;ins&gt;&lt;sg&gt;</td>
+</tr>
+<tr class="odd">
+<td><em>кулон</em></td>
+<td><em>кулон</em>&lt;n&gt;&lt;nom&gt;&lt;sg&gt;</td>
+</tr>
+<tr class="even">
+<td><em>кулоном</em></td>
+<td><em>кулон</em>&lt;n&gt;&lt;ins&gt;&lt;sg&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Важно также отметить, что вообще-то не обязательно что-то делать на каждом этапе. Можно сделать трансдьюсер, который по духу будет автоматом, но дойдя до некоторого состояния, будет выдавать лэйбл.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_12_morphology2.png" class="img-fluid figure-img" width="1918"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Лингвистические трансдьюсеры можно использовать для</p>
+<ul>
+<li>морфологического анализа</li>
+<li>транслитерации/транскрипции</li>
+<li>предиктивного ввода</li>
+<li>в системах проверки правописания</li>
+<li>в системах автоматического перевода близкородственных языков</li>
+<li>в системах распознавания речи</li>
+<li>и др.</li>
+</ul>
+<p>С трансдьюсерами можно делать много разных операций:</p>
+<ul>
+<li>объединение (конечные и начальные состояния совпадают, все промежуточные сохраняются);</li>
+<li>конкатенация (конечное состояние одного трансдьюсера становится начальным состоянием другого);</li>
+<li>пересечение (в особых случаях;</li>
+<li>вычитание (в особых случаях);</li>
+<li>композиция (обсудим ниже).</li>
+</ul>
+<p>Композиция трансдьюсеров аналогична функциям <code>join</code> для таблиц. После композиции трансдьюсера &lt;x, y&gt; и &lt;y, z&gt; получается новый трансдьюсер &lt;x, z&gt;.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="images/01_11_transducer_composition.png" class="img-fluid figure-img" width="1902"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Именно при помощи композиции трансдьюсеров можно объединять трансдьюсеры с разными “целями”: например, трансдьюсер, который приводит к начальной форме и пишет морфологические теги, с трансдьюсером, который переводит основы. Кроме того, бывают взвешенные трансдьюсеры, в которых каждому переходу в новое состояние приписывается некоторый вес. Такой трансдьюсер позволяет не просто получать возможные варианты, но и ранжировать их, что важно при создании спеллчекеров.</p>
+<p>Закончим перечислением преимуществ трансдьюсеров. Оптимизированный трансдьюсер оптимален с точки зрения объема требуемой памяти для хранения и скорости поиска. Композиция трансдьюсеров открывает большой и богатый мир, позволяет создавать и комбинировать между собой очень разные инструменты.</p>
+</section>
+</section>
+<section id="проблемы-моделирования-морфологии-языка" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="проблемы-моделирования-морфологии-языка"><span class="header-section-number">1.5</span> Проблемы моделирования морфологии языка</h2>
+<ul>
+<li>Проблема описаний:
+<ul>
+<li>неполнота: то, что исследователи посчитали достаточным для грамматического описания, может быть недостаточно для моделирования; для некоторого языка может быть доступно грамматическое описание, но отсутствовать словарь и наоборот; словарь может не содержать информации про словоизменительный класс каких-то единиц, которые различаются в грамматическом описании.</li>
+<li>противоречивые источники: грамматические описания могут противоречить друг другу; грамматические описания могут противоречить словарям</li>
+</ul></li>
+<li>Проблема вариативности:
+<ul>
+<li>идиолектная</li>
+<li>диалектная</li>
+<li>связанная с какими-нибудь социолингвистическими параметрами (в первую очередь такие как пол и возраст, но можно придумать и другие)</li>
+</ul></li>
+<li>Проблема неоднозначности (особенно перекошенной частотно):
+<ul>
+<li>лексической</li>
+<li>морфологическая</li>
+<li>синтаксическая</li>
+<li>…</li>
+</ul></li>
+<li>Проблема идиом и суплетивизма: в какой форме стоит глагол в ругательстве <em>** твою мать</em>?</li>
+<li>Проблема циклов, возникающих при словообразовании:
+<ul>
+<li>слуга (N) &gt; служить (V) &gt; услужить (V) &gt; услужение (N), услуга (N)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+</ul></li>
+<li>Проблема морфологической сложности: для языков с бедной морфологией проще строить прсотой правиловый морфологический парсер, а не трансдьюсер</li>
+<li>Технические сложности: весь софт для создания морфологических трансдьюсеров пишут под Linux, за исключением может быть пакета <a href="https://pypi.org/project/hfst-dev/"><code>hfst-dev</code></a> для Python</li>
+<li>Не так просто работать совместно над одним проектом, чаще всего лучше иметь двух людей — специалиста по языку, и специалиста по трансдьюсерам.</li>
+</ul>
+<p>Смотрите еще обсуждения на FST в работе <span class="citation" data-cites="wintner2008">(<a href="references.html#ref-wintner2008" role="doc-biblioref">Wintner 2008</a>)</span>.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-arefyev18" class="csl-entry" role="listitem">
+Arefyev, N. V., T. Y. Gratsianova, и K. P. Popov. 2018. <span>«Morphological segmentation with sequence to sequence neural network»</span>. В <em>KКомпьютерная лингвистика и интеллектуальные технологии</em>, 85–95.
+</div>
+<div id="ref-beesley03" class="csl-entry" role="listitem">
+Beesley, K. R., и L. Karttunen. 2003. <em>Finite State Morphology: Xerox tools and techniques</em>. Stanford: Center for Study of Language Information.
+</div>
+<div id="ref-bolshakova19a" class="csl-entry" role="listitem">
+Bolshakova, E. I., и A. S. Sapin. 2019a. <span>«Bi-LSTM model for morpheme segmentation of Russian words»</span>. В <em>Artificial Intelligence and Natural Language: 8th Conference, AINL 2019, Tartu, Estonia, November 20–22, 2019, Proceedings 8</em>, 151–60. Springer.
+</div>
+<div id="ref-bolshakova19b" class="csl-entry" role="listitem">
+———. 2019b. <span>«Comparing models of morpheme analysis for Russian words based on machine learning»</span>. В <em>Компьютерная лингвистика и интеллектуальные технологии</em>, 104–13.
+</div>
+<div id="ref-bolshakova20" class="csl-entry" role="listitem">
+———. 2020. <span>«An Experimental Study of Neural Morpheme Segmentation Models for Russian Word Forms.»</span> В <em>CMCL</em>, 79–89.
+</div>
+<div id="ref-garipov23" class="csl-entry" role="listitem">
+Garipov, T., D. Morozov, и A. Glazkova. 2023. <span>«Generalization ability of CNN-based Morpheme Segmentation»</span>. В <em>2023 Ivannikov Ispras Open Conference (ISPRAS)</em>, 58–62. IEEE.
+</div>
+<div id="ref-gronroos14" class="csl-entry" role="listitem">
+Grönroos, S.-A., S. Virpioja, P. Smit, и M. Kurimo. 2014. <span>«Morfessor <span>F</span>lat<span>C</span>at: An <span>HMM</span>-based method for unsupervised and semi-supervised learning of morphology»</span>. В <em>Proceedings of COLING 2014, the 25th International Conference on Computational Linguistics: Technical Papers</em>, 1177–85.
+</div>
+<div id="ref-mealy55" class="csl-entry" role="listitem">
+Mealy, G. H. 1955. <span>«A method for synthesizing sequential circuits»</span>. <em>The Bell System Technical Journal</em> 34 (5): 1045–79.
+</div>
+<div id="ref-moore56" class="csl-entry" role="listitem">
+Moore, E. F. 1956. <span>«Gedanken-experiments on sequential machines»</span>. <em>Automata studies</em> 34: 129–53.
+</div>
+<div id="ref-singh17" class="csl-entry" role="listitem">
+Singh, J., и V. Gupta. 2017. <span>«A systematic review of text stemming techniques»</span>. <em>Artificial Intelligence Review</em> 48: 157–217.
+</div>
+<div id="ref-sorokin18" class="csl-entry" role="listitem">
+Sorokin, Alexey, и Anastasia Kravtsova. 2018. <span>«Deep convolutional networks for supervised morpheme segmentation of Russian language»</span>. В <em>Artificial Intelligence and Natural Language: 7th International Conference, AINL 2018, St. Petersburg, Russia, October 17–19, 2018, Proceedings 7</em>, 3–10. Springer.
+</div>
+<div id="ref-straka18" class="csl-entry" role="listitem">
+Straka, Milan. 2018. <span>«UDPipe 2.0 prototype at <span>CoNLL</span> 2018 <span>UD</span> shared task»</span>. В <em>Proceedings of the CoNLL 2018 shared task: Multilingual parsing from raw text to universal dependencies</em>, 197–207.
+</div>
+<div id="ref-wintner2008" class="csl-entry" role="listitem">
+Wintner, S. 2008. <span>«Strengths and weaknesses of finite-state technology: a case study in morphological grammar development»</span>. <em>Natural Language Engineering</em> 14 (4): 457–69.
+</div>
+<div id="ref-arkhangelskiy12" class="csl-entry" role="listitem">
+Архангельский, Т. А. 2012. <span>«Принципы построения морфологического парсера для разноструктурных языков»</span>. Phdthesis, Московский государственный университет им. М. В. Ломоносова.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Я лишь предполагаю такую историческую деревацию, возможно, этимологии этих слов таят в себе значительно более сложную историю.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Скопировано");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Скопировано");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Введение">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Введение</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02_introduction_to_lexd.html" class="pagination-link" aria-label="Введение в `lexd`: морфология">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Введение в <code>lexd</code>: морфология</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
