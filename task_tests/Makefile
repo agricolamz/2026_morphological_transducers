@@ -27,7 +27,7 @@ generation: task.generator.hfst
 	@rm -f *.hfst
 
 for_test_%.txt:
-	@curl -s https://raw.githubusercontent.com/agricolamz/2025_morphological_transducers/refs/heads/main/task_tests/$@ -o $@
+	@curl -s https://raw.githubusercontent.com/agricolamz/2026_morphological_transducers/refs/heads/main/task_tests/$@ -o $@
 
 forms: task.generator.hfst
 	@hfst-fst2strings $^
