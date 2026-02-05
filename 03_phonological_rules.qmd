@@ -378,8 +378,8 @@ LEXICON NounRoot
 
 LEXICON NounInfl
 <nom><sg>:я
-<dat><sg>:ей
-<dat><pl>:ями
+<ins><sg>:ей
+<ins><pl>:ями
 <gen><pl>:{GEN.PL}[hard]
 <gen><pl>:{GEN.PL}ь[soft]
 ```
