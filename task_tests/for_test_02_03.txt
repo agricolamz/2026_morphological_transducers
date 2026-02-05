@@ -45,4 +45,4 @@ talvi<n><at><ess><sg>:talvella
 talvi<n><at><all><sg>:talvelle
 talvi<n><frml><sg>:talvena
 talvi<n><trans><sg>:talveksi
-talvi<n><priv><sg>:talvetta  
+talvi<n><priv><sg>:talvetta
