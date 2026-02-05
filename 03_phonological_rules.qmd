@@ -97,7 +97,7 @@ knitr::include_graphics("images/03_04_Russita-counterbleeding.png")
 - Для начала работы следует, как и раньше, скачать `Makefile`:
 
 ```{{shell}}
-$ curl -s https://raw.githubusercontent.com/agricolamz/2025_morphological_transducers/refs/heads/main/task_tests/Makefile -o Makefile; make
+$ curl -s https://raw.githubusercontent.com/agricolamz/2026_morphological_transducers/refs/heads/main/task_tests/Makefile -o Makefile; make
 ```
 
 - дальше, как и раньше, следует создать в колабе или у себя на компьютере (если у вас Linux), файл с названием `task.lexd`. В Google Colab для этого достаточно вставить первой строкой кодового блока `%%writefile task.lexd`. Вот пример такого файла:
