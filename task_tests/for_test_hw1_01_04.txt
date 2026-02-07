@@ -1,4 +1,4 @@
-aŋa<n><prc><n>:aŋanmaj
+aŋa<n><prc>:aŋanmaj
 aŋa<v><mcp><pst><p1><sg>:aŋanariwu
 aŋa<v><mcp><pst><p1><pl><exc>:aŋanariwun
 aŋa<v><mcp><pst><p2><sg>:aŋanariš
@@ -20,7 +20,7 @@ aŋa<v><pst><p2><pl>:aŋarišan
 aŋa<v><pst><p3><sg>:aŋarin
 aŋa<v><pst><p1><pl><inc>:aŋarit
 aŋa<v><pst><p3><pl>:aŋaritan
-oɲa<n><prc><n>:oɲanmaj
+oɲa<n><prc>:oɲanmaj
 oɲa<v><mcp><pst><p1><sg>:oɲanariwu
 oɲa<v><mcp><pst><p1><pl><exc>:oɲanariwun
 oɲa<v><mcp><pst><p2><sg>:oɲanariš
@@ -42,7 +42,7 @@ oɲa<v><pst><p2><pl>:oɲarišan
 oɲa<v><pst><p3><sg>:oɲarin
 oɲa<v><pst><p1><pl><inc>:oɲarit
 oɲa<v><pst><p3><pl>:oɲaritan
-olla<hunt><n><prc><n>:ollaminmaj
+olla<hunt><n><prc>:ollaminmaj
 olla<hunt><v><mcp><pst><p1><sg>:ollaminariwu
 olla<hunt><v><mcp><pst><p1><pl><exc>:ollaminariwun
 olla<hunt><v><mcp><pst><p2><sg>:ollaminariš
@@ -64,7 +64,7 @@ olla<hunt><v><pst><p2><pl>:ollamirišan
 olla<hunt><v><pst><p3><sg>:ollamirin
 olla<hunt><v><pst><p1><pl><inc>:ollamirit
 olla<hunt><v><pst><p3><pl>:ollamiritan
-olla<eat><n><prc><n>:ollatinmaj
+olla<eat><n><prc>:ollatinmaj
 olla<eat><v><mcp><pst><p1><sg>:ollatinariwu
 olla<eat><v><mcp><pst><p1><pl><exc>:ollatinariwun
 olla<eat><v><mcp><pst><p2><sg>:ollatinariš
@@ -87,7 +87,7 @@ olla<eat><v><pst><p3><sg>:ollatirin
 olla<eat><v><pst><p1><pl><inc>:ollatirit
 olla<eat><v><pst><p3><pl>:ollatiritan
 olla<n>:olla
-ma<n><prc><n>:manmaj
+ma<n><prc>:manmaj
 ma<v><mcp><pst><p1><sg>:manariwu
 ma<v><mcp><pst><p1><pl><exc>:manariwun
 ma<v><mcp><pst><p2><sg>:manariš
@@ -109,7 +109,7 @@ ma<v><pst><p2><pl>:marišan
 ma<v><pst><p3><sg>:marin
 ma<v><pst><p1><pl><inc>:marit
 ma<v><pst><p3><pl>:maritan
-kabew<hunt><n><prc><n>:kabewminmaj
+kabew<hunt><n><prc>:kabewminmaj
 kabew<hunt><v><mcp><pst><p1><sg>:kabewminariwu
 kabew<hunt><v><mcp><pst><p1><pl><exc>:kabewminariwun
 kabew<hunt><v><mcp><pst><p2><sg>:kabewminariš
@@ -131,7 +131,7 @@ kabew<hunt><v><pst><p2><pl>:kabewmirišan
 kabew<hunt><v><pst><p3><sg>:kabewmirin
 kabew<hunt><v><pst><p1><pl><inc>:kabewmirit
 kabew<hunt><v><pst><p3><pl>:kabewmiritan
-kabew<eat><n><prc><n>:kabewtinmaj
+kabew<eat><n><prc>:kabewtinmaj
 kabew<eat><v><mcp><pst><p1><sg>:kabewtinariwu
 kabew<eat><v><mcp><pst><p1><pl><exc>:kabewtinariwun
 kabew<eat><v><mcp><pst><p2><sg>:kabewtinariš
@@ -154,7 +154,7 @@ kabew<eat><v><pst><p3><sg>:kabewtirin
 kabew<eat><v><pst><p1><pl><inc>:kabewtirit
 kabew<eat><v><pst><p3><pl>:kabewtiritan
 kabew<n>:kabew
-boŋga<hunt><n><prc><n>:boŋgaminmaj
+boŋga<hunt><n><prc>:boŋgaminmaj
 boŋga<hunt><v><mcp><pst><p1><sg>:boŋgaminariwu
 boŋga<hunt><v><mcp><pst><p1><pl><exc>:boŋgaminariwun
 boŋga<hunt><v><mcp><pst><p2><sg>:boŋgaminariš
@@ -176,7 +176,7 @@ boŋga<hunt><v><pst><p2><pl>:boŋgamirišan
 boŋga<hunt><v><pst><p3><sg>:boŋgamirin
 boŋga<hunt><v><pst><p1><pl><inc>:boŋgamirit
 boŋga<hunt><v><pst><p3><pl>:boŋgamiritan
-boŋga<eat><n><prc><n>:boŋgatinmaj
+boŋga<eat><n><prc>:boŋgatinmaj
 boŋga<eat><v><mcp><pst><p1><sg>:boŋgatinariwu
 boŋga<eat><v><mcp><pst><p1><pl><exc>:boŋgatinariwun
 boŋga<eat><v><mcp><pst><p2><sg>:boŋgatinariš
