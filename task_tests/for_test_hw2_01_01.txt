@@ -1,0 +1,8 @@
+live<ger>:living
+live<prs>:live
+read<prs>:read
+read<ger>:reading
+talk<prs>:talk
+talk<ger>:talking
+write<ger>:writing
+write<prs>:write
