@@ -485,7 +485,7 @@ $ hfst-compare generator.hfst analyzer.hfst
 
 ### `hfst-concatenate`
 
-Конкатенация трансдьюсеров - последнее состояние одного трансдьюсера становится начальным состоянием второго.
+Конкатенация трансдьюсеров --- последнее состояние одного трансдьюсера становится начальным состоянием второго.
 
 ```{{shell}}
 hfst-concatenate generator.hfst generator2.hfst | hfst-fst2strings | head 
@@ -499,10 +499,10 @@ hfst-concatenate generator.hfst generator2.hfst | hfst-fst2strings | head
 Пересечение трансдьюсеров: выделяет общее для двух трансдьюсеров.
 
 ```{{shell}}
-hfst-conjunct generator.hfst generator2.hfst | hfst-fst2strings
+hfst-intersect generator.hfst generator2.hfst | hfst-fst2strings
 ```
 ```{python}
-!hfst-conjunct examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
+!hfst-intersect examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
 ```
 
 ### `hfst-disjunct` или `hfst-union`
@@ -510,11 +510,13 @@ hfst-conjunct generator.hfst generator2.hfst | hfst-fst2strings
 Объединение трансдьюсеров.
 
 ```{{shell}}
-hfst-disjunct generator.hfst generator2.hfst | hfst-fst2strings
+hfst-union generator.hfst generator2.hfst | hfst-fst2strings
 ```
 ```{python}
-!hfst-disjunct examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
+!hfst-union examples/generator.hfst examples/generator2.hfst | hfst-fst2strings
 ```
+
+Потенциально это важный инструмент, позволяющий разделить работу над разными фрагментами языка. Для каких-то отдельных словоизменительных типов (частей речи, или лексем с дефектными парадигмами) можно делать отдельные `.lexd` и `.twol` модули, которые потом соединяются во-едино, без опасности что-то поломать в общем `.twol`-файле.
 
 ### `hfst-subtract` или `hfst-minus`
 
