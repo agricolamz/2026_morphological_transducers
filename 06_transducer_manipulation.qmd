@@ -116,8 +116,8 @@ $ hfst-name -p generator.hfst
 
 Программа `hfst-edit-metadata` позволяет настроить, например, следующие поля: 
 
-- `--add=author=...` 
-- `--add=licence=...`
+- `--add=author='...'` 
+- `--add=licence='...'`
 - `--add=name='...'`
 
 ### `hfst-dump-alphabets`
@@ -301,7 +301,7 @@ $ echo "ночка" | hfst-lookup analyzer.hfstol
 
 ```{python}
 !hfst-fst2fst -O examples/analyzer.hfst -o examples/analyzer.hfstol
-!echo "ночка" | hfst-lookup examples/analyzer.hfst
+!echo "ночка" | hfst-lookup examples/analyzer.hfstol
 ```
 
 Программа `hfst-lookup` больше не выдает предупреждения. Еще более ожидаемый вывод будет, если использовать программу `hfst-optimized-lookup`:
