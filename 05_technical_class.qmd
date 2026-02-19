@@ -312,7 +312,7 @@ $ ls --sort size
 ```{{shell}}
 $ pwd
 
-/home/agricolamz/work/materials/2025_morphological_transducers/images
+/home/agricolamz/work/materials/2026_morphological_transducers/images
 ```
 
 Заодно мы увидели, что пути в юниксоподобных операционных системах пишут, используя слэш ("forward" slash).
@@ -322,7 +322,7 @@ $ pwd
 ```{{shell}}
 $ pwd
 
-/home/agricolamz/work/materials/2025_morphological_transducers/images
+/home/agricolamz/work/materials/2026_morphological_transducers/images
 
 $ cd /home/agricolamz/Documents/CV
 $ pwd
@@ -345,12 +345,12 @@ $ pwd
 $ cd -
 $ pwd
 
-/home/agricolamz/work/materials/2025_morphological_transducers/images
+/home/agricolamz/work/materials/2026_morphological_transducers/images
 
 $ cd ..
 $ pwd
 
-/home/agricolamz/work/materials/2025_morphological_transducers
+/home/agricolamz/work/materials/2026_morphological_transducers
 
 $ ls -d */
 data/  docs/  images/  task_tests/
@@ -358,7 +358,7 @@ data/  docs/  images/  task_tests/
 $ cd data
 $ pwd
 
-/home/agricolamz/work/materials/2025_morphological_transducers/data
+/home/agricolamz/work/materials/2026_morphological_transducers/data
 ```
 
 Для создания файла традиционно используют программу `touch`, хотя это, видимо, не ее прямое предназначение (см. детали в `touch --help`):
@@ -711,11 +711,11 @@ hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, s
 Using HFST basic transducer format and performing slow lookups
 > ночь	ночь	0,000000
 
-$ echo "ночька" | hfst-lookup lexd.hfst
+$ echo "ночь<dim>" | hfst-lookup lexd.hfst
 
 hfst-lookup: Warning: It is not possible to perform fast lookups with OpenFST, std arc, tropical semiring format automata.
 Using HFST basic transducer format and performing slow lookups
-> ночька	ночька+?	inf
+> ночь<dim>	ночька	0,000000
 ```
 
 Можно использовать программу `hfst-fst2strings`, чтобы посмотреть на все формы: 
@@ -807,4 +807,4 @@ $ hfst-fst2strings result.hfst
 печь
 ```
 
-Все! Мы сумели скомпелировать трансдьюсер, не используя [`Makefile`](https://raw.githubusercontent.com/agricolamz/2025_morphological_transducers/refs/heads/main/task_tests/Makefile), которым мы пользовались все это время.
+Все! Мы сумели скомпелировать трансдьюсер, не используя [`Makefile`](https://raw.githubusercontent.com/agricolamz/2026_morphological_transducers/refs/heads/main/task_tests/Makefile), которым мы пользовались все это время.
