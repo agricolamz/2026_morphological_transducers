@@ -791,13 +791,13 @@ $ hfst-fst2strings -r 10 twol.hfst
 Я считаю, что из преведенных фрагментов достаточно сложно что-то понять. Но попробуем пересечь наши трансдьюсеры:
 
 ```{{shell}}
-$ hfst-compose-intersect lexd.hfst twol.hfst -o result.hfst
+$ hfst-compose-intersect lexd.hfst twol.hfst -o generator.hfst
 ```
 
 Теперь мы можем посмотреть, что же у нас получилось:
 
 ```{{shell}}
-$ hfst-fst2strings result.hfst    
+$ hfst-fst2strings generator.hfst    
 
 ночь<dim>:ночка
 ночь<adj><m><sg><nom>:ночной
