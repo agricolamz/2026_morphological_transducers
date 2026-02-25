@@ -43,3 +43,4 @@ git -v
 
 - [Ссылка](https://classroom.github.com/a/zm8t9KNH) на первое домашнее задание. Дедлайн: 19 февраля 23:59.
 - [Ссылка](https://classroom.github.com/a/dSYb8rrJ) на второе домашнее задание. Дедлайн: 2 марта 23:59.
+- [Ссылка](https://classroom.github.com/a/sZTBFRh_) на третье домашнее задание. Дедлайн: 11 марта 23:59.
