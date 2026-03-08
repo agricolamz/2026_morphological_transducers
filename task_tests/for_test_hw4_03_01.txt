@@ -1,0 +1,14 @@
+bus><n><sg>:bus
+bus><n><pl>:bus>es
+cat><n><sg>:cat
+cat><n><pl>:cat>s
+dog><n><sg>:dog
+dog><n><pl>:dog>s
+fox><n><sg>:fox
+fox><n><pl>:fox>es
+quiz><n><sg>:quiz
+quiz><n><pl>:quiz>zes
+watch><n><sg>:watch
+watch><n><pl>:watch>es
+wish><n><sg>:wish
+wish><n><pl>:wish>es
